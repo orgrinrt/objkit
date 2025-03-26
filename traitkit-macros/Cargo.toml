@@ -1,0 +1,20 @@
+[package]
+name = "traitkit-macros"
+edition.workspace = true
+version.workspace = true
+authors.workspace = true
+license-file.workspace = true
+rust-version.workspace = true
+
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote.workspace = true
+syn.workspace = true
+proc-macro2.workspace = true
+include_proc_macro.workspace = true
+#traitkit-shared.workspace = true
+
+[features]

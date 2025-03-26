@@ -1,0 +1,9 @@
+[package]
+name = "traitkit-shared"
+edition.workspace = true
+version.workspace = true
+authors.workspace = true
+license-file.workspace = true
+rust-version.workspace = true
+
+[features]

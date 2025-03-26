@@ -1,9 +1,9 @@
 [package]
 name = "traitkit"
-authors = ["orgrinrt", "Hiisi Digital"]
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.60.0"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 description = """
 A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by Rust's trait system directly, such as cloning, comparison, and conversion
 """
@@ -16,24 +16,30 @@ homepage = "https://github.com/orgrinrt/traitkit"
 repository = "https://github.com/orgrinrt/traitkit"
 
 [workspace]
-members = []
-
-[lib]
-proc-macro = true
+package.version = "0.1.0"
+package.edition = "2021"
+package.rust-version = "1.60.0"
+package.members = ["traitkit-macros", "traitkit-shared"]
+package.authors = ["orgrinrt", "Hiisi Digital"]
+package.license-file = "../LICENSE"
 
 [workspace.dependencies]
 proc-macro2 = { version = "^1.0" }
 quote = { version = "^1.0", features = ["proc-macro"] }
 syn = { version = "^2.0.0", features = ["full"] }
+include_proc_macro = "2.0.6"
+traitkit-shared = { path = "traitkit-shared" }
 
 [dependencies]
+traitkit-macros = { path = "traitkit-macros" }
+traitkit-shared.workspace = true
 proc-macro2.workspace = true
 quote.workspace = true
 syn.workspace = true
+include_proc_macro.workspace = true
 
 [features]
 default = []
-full = []
 
 [clippy]
 default-features = true
