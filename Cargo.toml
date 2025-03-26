@@ -1,0 +1,50 @@
+[package]
+name = "traitkit"
+authors = ["orgrinrt", "Hiisi Digital"]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.60.0"
+description = """
+A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by Rust's trait system directly, such as cloning, comparison, and conversion
+"""
+license-file = "LICENSE"
+readme = "README.md"
+keywords = []
+categories = []
+documentation = "https://docs.rs/traitkit"
+homepage = "https://github.com/orgrinrt/traitkit"
+repository = "https://github.com/orgrinrt/traitkit"
+
+[workspace]
+members = []
+
+[lib]
+proc-macro = true
+
+[workspace.dependencies]
+proc-macro2 = { version = "^1.0" }
+quote = { version = "^1.0", features = ["proc-macro"] }
+syn = { version = "^2.0.0", features = ["full"] }
+
+[dependencies]
+proc-macro2.workspace = true
+quote.workspace = true
+syn.workspace = true
+
+[features]
+default = []
+full = []
+
+[clippy]
+default-features = true
+extra-plugins = [
+    "clippy::pedantic",
+    "clippy::cargo",
+    "+clippy::nursery",
+    "+clippy::style",
+    "+clippy::complexity",
+    "+clippy::perf",
+    "+clippy::correctness",
+    "+clippy::suspicious",
+    "+clippy::deprecated"
+]
