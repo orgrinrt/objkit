@@ -8,7 +8,6 @@
 [![Latest Version](https://img.shields.io/badge/version-2.0.6-blue.svg?label=latest)](https://github.com/orgrinrt/traitkit)
 ![Crates.io Version](https://img.shields.io/crates/v/traitkit?logoSize=auto&color=%23FDC700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
 ![Crates.io Size](https://img.shields.io/crates/size/traitkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
-![Crates.io MSRV](https://img.shields.io/crates/msrv/traitkit?style=flat&logoSize=auto&color=%23D08700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
 ![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/traitkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Ftraitkit)
 
 > A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
@@ -128,7 +127,9 @@ In rust, trait objects (`dyn Trait`) have fundamental limitations due to type er
 These limitations can make working with trait objects cumbersome in scenarios where operations like cloning (currently handled with the
 `clone_box` pattern macro), comparison (todo), or conversion (todo) are needed.
 
-## The Benefits
+## Pros & Cons
+
+### Pros
 
 1. **Type-system friendly**:
    Creates auxiliary trait implementations that work with rust's type system to keep static dispatch for concrete types, only using dynamic dispatch at trait object boundaries where it's unavoidable.
@@ -151,13 +152,39 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 7. **Focus on preserving object safety**:
    Avoids self-referential methods, associated types without bounds, or other features that would violate object safety requirements.
 
+### Cons
+
+1. **Procedural Macro Dependency**:
+   Adds a procedural macro dependency to your project, which will increase compile times, even if only slightly. They can easily build up, so be mindful of that.
+
+2. **Additional Generated Traits**:
+   Creates auxiliary traits in your codebase that could potentially lead to name conflicts or increase the binary size.
+
+3. **Implicit Code Generation**:
+   The auto-generated implementations may make it less obvious what's happening under the hood compared to manual implementations. But that's also a pro. It's a two-edged sword.
+
+4. **Still Developing Features**:
+   Currently only implements the clone_box pattern, with other patterns still in planning.
+
+5. **Trait Object Limitations**:
+   Still bound by rust's fundamental trait object constraints. Not a magic bullet, just a convenience for some common patterns.
+
+6. **Strict Trait Bounds**:
+   Imposes specific trait bounds (like
+   `Clone + 'static`) which might be more restrictive than a bespoke manual implementation for some cases.
+
+7. **Learning Curve for Debugging**:
+   Requires understanding the underlying pattern to effectively work through possible issues. Some of the quirks that come with the territory may not be immediately obvious to those who don't know the pattern, which can cause frustration.
+
 > **Note:** Performance benchmarks comparing this implementation to manual approaches
 > will be added before crates.io release. Current "minimal overhead" claims are based
 > on analysis of the generated code rather than quantitative measurements.
 
 ## Compatibility
 
-This crate requires rust 1.60.0 or later. We follow a conservative MSRV policy, only bumping the minimum version when significant benefits are gained.
+![Crates.io MSRV](https://img.shields.io/crates/msrv/traitkit?style=flat&logoSize=auto&color=%23D08700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
+
+We strive to keep the msrv as low and as widely compatible as possible, but sometimes significant benefits can be gained by using certain newer features.
 
 ## Support
 
