@@ -1,11 +1,28 @@
+[workspace]
+members = ["traitkit-macros", "traitkit-shared"]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.64.0"
+authors = ["orgrinrt", "Hiisi Digital"]
+
+[workspace.dependencies]
+proc-macro2 = { version = "^1.0" }
+quote = { version = "^1.0", features = ["proc-macro"] }
+syn = { version = "^2.0.0", features = ["full"] }
+include_proc_macro = "2.0.6"
+traitkit-shared = { path = "traitkit-shared" }
+traitkit-macros = { path = "traitkit-macros" }
+
 [package]
 name = "traitkit"
 version.workspace = true
-authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
+authors.workspace = true
 description = """
-A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by Rust's trait system directly, such as cloning, comparison, and conversion
+A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
 """
 license-file = "LICENSE"
 readme = "README.md"
@@ -15,28 +32,9 @@ documentation = "https://docs.rs/traitkit"
 homepage = "https://github.com/orgrinrt/traitkit"
 repository = "https://github.com/orgrinrt/traitkit"
 
-[workspace]
-package.version = "0.1.0"
-package.edition = "2021"
-package.rust-version = "1.60.0"
-package.members = ["traitkit-macros", "traitkit-shared"]
-package.authors = ["orgrinrt", "Hiisi Digital"]
-package.license-file = "../LICENSE"
-
-[workspace.dependencies]
-proc-macro2 = { version = "^1.0" }
-quote = { version = "^1.0", features = ["proc-macro"] }
-syn = { version = "^2.0.0", features = ["full"] }
-include_proc_macro = "2.0.6"
-traitkit-shared = { path = "traitkit-shared" }
-
 [dependencies]
-traitkit-macros = { path = "traitkit-macros" }
-traitkit-shared.workspace = true
-proc-macro2.workspace = true
-quote.workspace = true
-syn.workspace = true
-include_proc_macro.workspace = true
+traitkit-macros.workspace = true
+#traitkit-shared.workspace = true
 
 [features]
 default = []

@@ -3,8 +3,6 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-use include_proc_macro::macros;
-
-macros! {
+include_proc_macro::macros! {
     attribute -> clone_box:: clone_box,
 }

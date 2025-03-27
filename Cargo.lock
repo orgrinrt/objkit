@@ -39,19 +39,14 @@ dependencies = [
 
 [[package]]
 name = "traitkit"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
- "include_proc_macro",
- "proc-macro2",
- "quote",
- "syn",
  "traitkit-macros",
- "traitkit-shared",
 ]
 
 [[package]]
 name = "traitkit-macros"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "include_proc_macro",
  "proc-macro2",
@@ -61,7 +56,7 @@ dependencies = [
 
 [[package]]
 name = "traitkit-shared"
-version = "0.1.0"
+version = "0.0.1"
 
 [[package]]
 name = "unicode-ident"
