@@ -8,7 +8,6 @@ on:
 
 jobs:
   call_crate_cicd:
-    needs: update-benchmarks
     uses: orgrinrt/cicd/.github/workflows/crate_ci.yml@main
     secrets:
       CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
