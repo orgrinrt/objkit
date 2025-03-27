@@ -182,9 +182,14 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 ## Compatibility
 
-![Crates.io MSRV](https://img.shields.io/crates/msrv/traitkit?style=flat&logoSize=auto&color=%23D08700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
+This crate requires a minimum version of `1.6.4` for the rust toolchain.
 
-We strive to keep the msrv as low and as widely compatible as possible, but sometimes significant benefits can be gained by using certain newer features.
+We strive to keep the msrv as low and as widely compatible as possible, but sometimes big enough benefits can be gained by using certain newer features.
+
+For this crate, for pragmatic reasons, we pin the msrv to
+`1.6.4` to have the crate management niceties of the version's stabilised `workspace-inheritance` feature.
+
+This is ensured via ci/cd which verifies the compatibility with the msrv each time a new version of this crate is released.
 
 ## Support
 
