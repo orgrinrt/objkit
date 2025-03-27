@@ -177,7 +177,7 @@ These limitations can make working with trait objects cumbersome in scenarios wh
    Requires understanding the underlying pattern to effectively work through possible issues. Some of the quirks that come with the territory may not be immediately obvious to those who don't know the pattern, which can cause frustration.
 
 > **Note:** Performance benchmarks comparing this implementation to manual approaches
-> will be added before crates.io release. Current "minimal overhead" claims are based
+> will be added before the first minor release `0.1`. Current "minimal overhead" claims are based
 > on analysis of the generated code rather than quantitative measurements.
 
 ## Compatibility
