@@ -1,7 +1,9 @@
 //------------------------------------------------------------------------------
 // Copyright (c) 2025 orgrinrt (orgrinrt@ikiuni.dev)
+//                    Hiisi Digital Oy (contact@hiisi.digital)
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
+
 //! This module implements the clone_box attribute macro.
 //!
 //! When a trait is annotated with `#[clone_box]`, the macro expands it to generate a unique
