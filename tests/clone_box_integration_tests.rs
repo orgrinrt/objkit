@@ -1,5 +1,6 @@
 //------------------------------------------------------------------------------
 // Copyright (c) 2025 orgrinrt (orgrinrt@ikiuni.dev)
+//                    Hiisi Digital Oy (contact@hiisi.digital)
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
@@ -32,8 +33,15 @@ fn test_clone_box() {
     assert_eq!(cloned.value(), 42);
 
     // verify they are different objects
-    let original_ptr = &*original as *const dyn TestTrait;
-    let cloned_ptr = &*cloned as *const dyn TestTrait;
+    //
+    // NOTE: the below compares the fat ptrs which can lead to false positives
+    // let original_ptr = &*original as *const dyn TestTrait;
+    // let cloned_ptr = &*cloned as *const dyn TestTrait;
+    //
+    // NOTE: so we compare the data pointers instead below
+    //       (leaving these notices here for future reference)
+    let original_ptr = (&*original as *const dyn TestTrait) as *const ();
+    let cloned_ptr = (&*cloned as *const dyn TestTrait) as *const ();
     assert_ne!(original_ptr, cloned_ptr);
 }
 
