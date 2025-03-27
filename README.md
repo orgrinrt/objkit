@@ -5,7 +5,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/orgrinrt/traitkit.svg)](https://github.com/orgrinrt/traitkit/stargazers)
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/traitkit)](https://crates.io/crates/traitkit)
 [![GitHub Issues](https://img.shields.io/github/issues/orgrinrt/traitkit.svg)](https://github.com/orgrinrt/traitkit/issues)
-[![Latest Version](https://img.shields.io/badge/version-2.0.6-blue.svg?label=latest)](https://github.com/orgrinrt/traitkit)
+[![Latest Version](https://img.shields.io/badge/version-0.0.1-red.svg?label=latest)](https://github.com/orgrinrt/traitkit)
 ![Crates.io Version](https://img.shields.io/crates/v/traitkit?logoSize=auto&color=%23FDC700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
 ![Crates.io Size](https://img.shields.io/crates/size/traitkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
 ![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/traitkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Ftraitkit)

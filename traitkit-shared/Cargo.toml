@@ -1,9 +1,8 @@
 [package]
 name = "traitkit-shared"
-edition.workspace = true
 version.workspace = true
-authors.workspace = true
-license-file.workspace = true
+edition.workspace = true
 rust-version.workspace = true
+authors.workspace = true
 
 [features]
