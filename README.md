@@ -184,8 +184,8 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 This crate requires rust `1.64.0` or later.
 
-For practical reasons, we pin the msrv to
-`1.64.0` to utilize cargo's stabilized `workspace-inheritance` feature, but also remain fairly compatible.
+For practical reasons, we pin the msrv there to utilize cargo's stabilized
+`workspace-inheritance` feature, but also to remain fairly compatible.
 
 ### Versioning policy
 
