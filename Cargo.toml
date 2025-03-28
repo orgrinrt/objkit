@@ -1,5 +1,5 @@
 [workspace]
-members = ["traitkit-macros", "traitkit-shared"]
+members = ["objkit-macros", "objkit-shared"]
 
 [workspace.package]
 version = "0.0.2"
@@ -12,11 +12,11 @@ proc-macro2 = { version = "^1.0" }
 quote = { version = "^1.0", features = ["proc-macro"] }
 syn = { version = "^2.0.0", features = ["full"] }
 include_proc_macro = "2.0.6"
-traitkit-shared = { path = "traitkit-shared" }
-traitkit-macros = { path = "traitkit-macros" }
+objkit-shared = { path = "objkit-shared" }
+objkit-macros = { path = "objkit-macros" }
 
 [package]
-name = "traitkit"
+name = "objkit"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -28,9 +28,9 @@ license-file = "LICENSE"
 readme = "README.md"
 keywords = []
 categories = []
-documentation = "https://docs.rs/traitkit"
-homepage = "https://github.com/orgrinrt/traitkit"
-repository = "https://github.com/orgrinrt/traitkit"
+documentation = "https://docs.rs/objkit"
+homepage = "https://github.com/orgrinrt/objkit"
+repository = "https://github.com/orgrinrt/objkit"
 
 [dependencies]
 traitkit-macros.workspace = true
