@@ -9,6 +9,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dcf8fd6689853bd1436aa7ba5634c5f9b2a0c25c67907aa81ef6193b3799369f"
 
 [[package]]
+name = "objkit"
+version = "0.0.2"
+dependencies = [
+ "objkit-macros",
+]
+
+[[package]]
+name = "objkit-macros"
+version = "0.0.2"
+dependencies = [
+ "include_proc_macro",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "objkit-shared"
+version = "0.0.2"
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.94"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -36,27 +57,6 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
-
-[[package]]
-name = "traitkit"
-version = "0.0.2"
-dependencies = [
- "traitkit-macros",
-]
-
-[[package]]
-name = "traitkit-macros"
-version = "0.0.2"
-dependencies = [
- "include_proc_macro",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "traitkit-shared"
-version = "0.0.2"
 
 [[package]]
 name = "unicode-ident"
