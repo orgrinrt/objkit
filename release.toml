@@ -1,0 +1,15 @@
+[workspace]
+dependencies-order = true
+publish = true
+
+[packages."traitkit-shared"]
+[packages."traitkit-macros"]
+[packages."traitkit"]
+
+[release.github]
+token = "env:GITHUB_TOKEN"
+owner = "orgrinrt"
+repository = "traitkit"
+tag-name = "{{version}}"
+name = "Release {{version}}"
+draft = false
