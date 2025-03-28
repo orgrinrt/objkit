@@ -10,7 +10,7 @@
 ![Crates.io Size](https://img.shields.io/crates/size/traitkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
 ![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/traitkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Ftraitkit)
 
-> A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
+> A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion.
 
 </div>
 
@@ -182,14 +182,16 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 ## Compatibility
 
-This crate requires a minimum version of `1.6.4` for the rust toolchain.
+This crate requires rust `1.64.0` or later.
 
-We strive to keep the msrv as low and as widely compatible as possible, but sometimes big enough benefits can be gained by using certain newer features.
+For practical reasons, we pin the msrv to
+`1.64.0` to utilize cargo's stabilized `workspace-inheritance` feature, but also remain fairly compatible.
 
-For this crate, for pragmatic reasons, we pin the msrv to
-`1.6.4` to have the crate management niceties of the version's stabilised `workspace-inheritance` feature.
+### Versioning policy
 
-This is ensured via ci/cd which verifies the compatibility with the msrv each time a new version of this crate is released.
+Minor versions may have breaking changes, which can include bumping msrv.
+
+Patch versions are backwards compatible, so using version specifiers such as `~x.y` or `^x.y.0` is safe.
 
 ## Support
 
