@@ -2,14 +2,14 @@
 dependencies-order = true
 publish = true
 
-[packages."traitkit-shared"]
-[packages."traitkit-macros"]
-[packages."traitkit"]
+[packages."objkit-shared"]
+[packages."objkit-macros"]
+[packages."objkit"]
 
 [release.github]
 token = "env:GITHUB_TOKEN"
 owner = "orgrinrt"
-repository = "traitkit"
+repository = "objkit"
 tag-name = "{{version}}"
 name = "Release {{version}}"
 draft = false

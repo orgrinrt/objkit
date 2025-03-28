@@ -1,14 +1,14 @@
-# traitkit
+# objkit
 
 <div align="center" style="text-align: center;">
 
-[![GitHub Stars](https://img.shields.io/github/stars/orgrinrt/traitkit.svg)](https://github.com/orgrinrt/traitkit/stargazers)
-[![Crates.io Total Downloads](https://img.shields.io/crates/d/traitkit)](https://crates.io/crates/traitkit)
-[![GitHub Issues](https://img.shields.io/github/issues/orgrinrt/traitkit.svg)](https://github.com/orgrinrt/traitkit/issues)
-[![Latest Version](https://img.shields.io/badge/version-0.0.2-red.svg?label=latest)](https://github.com/orgrinrt/traitkit)
-![Crates.io Version](https://img.shields.io/crates/v/traitkit?logoSize=auto&color=%23FDC700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
-![Crates.io Size](https://img.shields.io/crates/size/traitkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Ftraitkit)
-![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/traitkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Ftraitkit)
+[![GitHub Stars](https://img.shields.io/github/stars/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/stargazers)
+[![Crates.io Total Downloads](https://img.shields.io/crates/d/objkit)](https://crates.io/crates/objkit)
+[![GitHub Issues](https://img.shields.io/github/issues/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/issues)
+[![Latest Version](https://img.shields.io/badge/version-0.0.2-red.svg?label=latest)](https://github.com/orgrinrt/objkit)
+![Crates.io Version](https://img.shields.io/crates/v/objkit?logoSize=auto&color=%23FDC700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Fobjkit)
+![Crates.io Size](https://img.shields.io/crates/size/objkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Fobjkit)
+![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/objkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Fobjkit)
 
 > A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion.
 
@@ -28,7 +28,7 @@ This crate provides procedural macros that enhance rust traits by enabling opera
 `clone_box` attribute, which enables cloning of trait objects with minimal abstraction overhead beyond the unavoidable dynamic dispatch.
 
 ```rust
-use traitkit::clone_box;
+use objkit::clone_box;
 
 #[clone_box]
 pub trait MyTrait {}
@@ -39,7 +39,7 @@ pub trait MyTrait {}
 Here's a simple example showing how to use the `clone_box` attribute to create clonable trait objects without the boilerplate:
 
 ```rust
-use traitkit::clone_box;
+use objkit::clone_box;
 
 #[clone_box]
 pub trait Animal {
@@ -205,4 +205,4 @@ Whether you use this project, have learned something from it, or just like it, p
 
 `SPDX-License-Identifier: MPL-2.0`
 
-> You can check out the full license [here](https://github.com/orgrinrt/traitkit/blob/master/LICENSE)
+> You can check out the full license [here](https://github.com/orgrinrt/objkit/blob/master/LICENSE)
