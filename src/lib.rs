@@ -4,4 +4,4 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-pub use traitkit_macros::clone_box;
+pub use objkit_macros::clone_box;

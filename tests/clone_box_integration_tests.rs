@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-use traitkit::clone_box;
+use objkit::clone_box;
 
 #[clone_box]
 pub trait TestTrait {
