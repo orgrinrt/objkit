@@ -36,3 +36,17 @@ objkit-macros.workspace = true
 
 [features]
 default = []
+
+[clippy]
+default-features = true
+extra-plugins = [
+    "clippy::pedantic",
+    "clippy::cargo",
+    "+clippy::nursery",
+    "+clippy::style",
+    "+clippy::complexity",
+    "+clippy::perf",
+    "+clippy::correctness",
+    "+clippy::suspicious",
+    "+clippy::deprecated"
+]
