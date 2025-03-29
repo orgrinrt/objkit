@@ -13,3 +13,4 @@ repository = "objkit"
 tag-name = "{{version}}"
 name = "Release {{version}}"
 draft = false
+body = "env:GITHUB_RELEASE_BODY"
