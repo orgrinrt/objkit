@@ -4,9 +4,9 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
+use objkit::clone_box;
 use std::any::Any;
 use std::cell::Cell;
-use traitkit::clone_box;
 
 #[clone_box]
 pub trait AdvancedTrait: Any {

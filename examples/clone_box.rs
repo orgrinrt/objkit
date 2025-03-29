@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-use traitkit_macros::clone_box;
+use objkit_macros::clone_box;
 
 #[clone_box]
 pub trait Animal {
