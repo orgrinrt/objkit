@@ -61,6 +61,6 @@ pub(crate) fn super_inlined_name(trait_name: &syn::Ident) -> syn::Ident {
     format_ident!("as_{}", trait_name.to_string().to_lowercase())
 }
 
-pub(crate) fn super_inlined_name_box(trait_name: &syn::Ident) -> syn::Ident {
-    format_ident!("as_{}_box", trait_name.to_string().to_lowercase())
-}
+// pub(crate) fn super_inlined_name_box(trait_name: &syn::Ident) -> syn::Ident {
+//     format_ident!("as_{}_box", trait_name.to_string().to_lowercase())
+// }
