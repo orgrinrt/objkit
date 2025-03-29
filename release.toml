@@ -2,7 +2,6 @@
 dependencies-order = true
 publish = true
 
-[packages."objkit-shared"]
 [packages."objkit-macros"]
 [packages."objkit"]
 
