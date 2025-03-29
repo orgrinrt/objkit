@@ -4,13 +4,12 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-#[path = "aux_trait.rs"]
-mod aux_trait;
+pub mod aux_trait;
 
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, ItemTrait};
 
-pub fn clone_box(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn as_super(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_trait = parse_macro_input!(item as ItemTrait);
     let original_trait = input_trait.clone();
 
@@ -19,8 +18,8 @@ pub fn clone_box(_attr: TokenStream, item: TokenStream) -> TokenStream {
     output.into()
 }
 
-pub(crate) const CLONE_BOXED_TRAIT_NAME: &str = "CloneBoxed";
+pub(crate) const AS_SUPER_TRAIT_NAME: &str = "AsSuper";
 
-fn auxiliary_trait_name(trait_name: Option<&syn::Ident>) -> syn::Ident {
-    crate::auxiliary_trait_name(trait_name, CLONE_BOXED_TRAIT_NAME)
+pub(crate) fn auxiliary_trait_name(trait_name: Option<&syn::Ident>) -> syn::Ident {
+    crate::auxiliary_trait_name(trait_name, AS_SUPER_TRAIT_NAME)
 }
