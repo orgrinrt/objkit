@@ -131,6 +131,9 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 ## Pros & Cons
 
+<details>
+<summary>Click to expand initial listing (not necessarily accurate at this point anymore)</summary>
+
 ### Pros
 
 1. **Type-system friendly**:
@@ -179,6 +182,8 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 7. **Learning Curve for Debugging**:
    Requires understanding the underlying pattern to effectively work through possible issues. Some of the quirks that come with the territory may not be immediately obvious to those who don't know the pattern, which can cause frustration.
+
+</details>
 
 > **Note:** Performance benchmarks comparing this implementation to manual approaches
 > will be added before the first minor release `0.1`. Current "minimal overhead" claims are based
