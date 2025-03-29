@@ -3,6 +3,7 @@
 //                    Hiisi Digital Oy (contact@hiisi.digital)
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", "README.md"))]
 
 pub use objkit_macros::as_any;
 pub use objkit_macros::as_super;
