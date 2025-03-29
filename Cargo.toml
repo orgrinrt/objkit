@@ -1,5 +1,5 @@
 [workspace]
-members = ["objkit-macros", "objkit-shared"]
+members = ["objkit-macros"]
 
 [workspace.package]
 version = "0.0.2"
@@ -12,8 +12,7 @@ proc-macro2 = { version = "^1.0" }
 quote = { version = "^1.0", features = ["proc-macro"] }
 syn = { version = "^2.0.0", features = ["full"] }
 include_proc_macro = "2.0.6"
-objkit-shared = { path = "objkit-shared" }
-objkit-macros = { path = "objkit-macros" }
+objkit-macros = { path = "objkit-macros", version = "^0" }
 
 [package]
 name = "objkit"
@@ -22,7 +21,7 @@ edition.workspace = true
 rust-version.workspace = true
 authors.workspace = true
 description = """
-A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
+A toolkit providing convenient abstractions for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
 """
 license-file = "LICENSE"
 readme = "README.md"
@@ -34,21 +33,6 @@ repository = "https://github.com/orgrinrt/objkit"
 
 [dependencies]
 objkit-macros.workspace = true
-#objkit-shared.workspace = true
 
 [features]
 default = []
-
-[clippy]
-default-features = true
-extra-plugins = [
-    "clippy::pedantic",
-    "clippy::cargo",
-    "+clippy::nursery",
-    "+clippy::style",
-    "+clippy::complexity",
-    "+clippy::perf",
-    "+clippy::correctness",
-    "+clippy::suspicious",
-    "+clippy::deprecated"
-]

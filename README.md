@@ -10,21 +10,23 @@
 ![Crates.io Size](https://img.shields.io/crates/size/objkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Fobjkit)
 ![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/objkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Fobjkit)
 
-> A toolkit providing minimal-cost abstractions of well-established patterns for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion.
+> A toolkit providing convenient abstractions for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
+
 
 </div>
 
 ## Features
 
-| Feature     | Status      | Description         |
-|-------------|-------------|---------------------|
-| `clone_box` | ✅ Available | `clone_box` pattern |
-| comparison  | 🚧 Planned  |                     |
-| conversion  | 🚧 Planned  |                     |
+| Feature     | Status      | Description                                 |
+|-------------|-------------|---------------------------------------------|
+| `clone_box` | ✅ Stable    | `clone_box` pattern                         |
+| `obj_eq`    | 🚧 Unstable | equality comparisons for trait objects      |
+| `as_super`  | 🚧 Unstable | a shorthand for `as_foo(&self) -> &dyn Foo` |
+| `as_any`    | 🚧 Unstable | downcasting to `Any` for trait objects      |
 
 ## Usage
 
-This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole feature is the
+This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole ready feature is the
 `clone_box` attribute, which enables cloning of trait objects with minimal abstraction overhead beyond the unavoidable dynamic dispatch.
 
 ```rust
@@ -138,7 +140,9 @@ These limitations can make working with trait objects cumbersome in scenarios wh
    Maintains, where possible, rust's type system through trait bounds, for example for the clone_box pattern, by enforcing implementors be
    `Clone + 'static` without runtime checks.
 3. **Minimal overhead abstractions**:
-   Introduces no overhead beyond the inherent dynamic dispatch required when working with trait objects. Avoids additional indirection layers or heap allocations that would degrade performance compared to a manually written implementation.
+   ~~Introduces no overhead beyond the inherent dynamic dispatch required when working with trait objects. Avoids additional indirection
+   layers or heap allocations that would degrade performance compared to a manually written implementation.~~ **NOTE: right now this is a
+   work in progress and does not necessarily hold true**
 4. **Reduces manual boilerplate**:
    Replaces error-prone manual auxiliary traits, blanket implementations, and explicit method forwarding typically needed for the clone_box pattern.
 
