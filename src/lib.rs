@@ -14,6 +14,10 @@
     clippy::correctness,
     clippy::suspicious
 )]
+#![cfg_attr(feature = "no_std", no_std)]
+
+#[cfg(feature = "no_std")]
+extern crate alloc;
 
 pub use objkit_macros::as_any;
 pub use objkit_macros::as_super;

@@ -3,6 +3,11 @@
 //                    Hiisi Digital Oy (contact@hiisi.digital)
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
+#![cfg_attr(feature = "no_std", no_std)]
+
+#[cfg(feature = "no_std")]
+extern crate alloc;
+
 use objkit::as_super;
 
 #[as_super]

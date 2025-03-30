@@ -29,8 +29,9 @@
 //!
 
 use crate::clone_box::auxiliary_trait_name;
+use crate::{appended_generics, box_path};
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{format_ident, quote};
 use syn::{parse_quote, ItemTrait};
 
 pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
@@ -38,38 +39,39 @@ pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
     let trait_generics = &original_trait.generics;
     let vis = &original_trait.vis;
     let aux_trait_name = auxiliary_trait_name(Some(trait_name));
+    let box_path = box_path();
 
-    // modify the trait to extend the aux trait
+    let internal_generic: syn::Ident = format_ident!("__U__");
+    let merged_generics = appended_generics(trait_generics, &internal_generic);
+
     original_trait
         .supertraits
-        .push(parse_quote!(#aux_trait_name));
+        .push(parse_quote!(#aux_trait_name #trait_generics));
 
-    // generate the auxiliary trait (unique for this trait)
     let aux_trait = quote! {
-        #vis trait #aux_trait_name {
-            fn clone_box(&self) -> Box<dyn #trait_name #trait_generics>;
+        #vis trait #aux_trait_name #trait_generics {
+            fn clone_box(&self) -> #box_path <dyn #trait_name #trait_generics>;
         }
     };
 
-    // provide a blanket impl for the auxiliary trait
     let aux_impl = quote! {
-        impl<T> #aux_trait_name for T
+        impl #merged_generics #aux_trait_name #trait_generics for #internal_generic
         where
-            T: #trait_name #trait_generics + Clone + 'static,
+            #internal_generic: #trait_name #trait_generics + Clone + 'static,
         {
             #[inline]
-            fn clone_box(&self) -> Box<dyn #trait_name #trait_generics> {
-                Box::new(self.clone())
+            fn clone_box(&self) -> #box_path <dyn #trait_name #trait_generics> {
+                #box_path::new(self.clone())
             }
         }
     };
 
     // implement Clone for Box<dyn Trait> by dispatching via the aux trait
     let box_clone_impl = quote! {
-        impl Clone for Box<dyn #trait_name #trait_generics> {
+        impl Clone for #box_path <dyn #trait_name #trait_generics> {
             #[inline]
             fn clone(&self) -> Self {
-                <dyn #trait_name #trait_generics as #aux_trait_name>::clone_box(&**self)
+                <dyn #trait_name as #aux_trait_name>::clone_box(&**self)
             }
         }
     };

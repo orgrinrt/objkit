@@ -25,8 +25,8 @@ A toolkit providing convenient abstractions for trait object operations that are
 """
 license-file = "LICENSE"
 readme = "README.md"
-keywords = []
-categories = []
+keywords = ["trait-objects", "dyn-traits", "object-safety", "vtable", "type-erasure"]
+categories = ["rust-patterns", "development-tools", "data-structures"]
 documentation = "https://docs.rs/objkit"
 homepage = "https://github.com/orgrinrt/objkit"
 repository = "https://github.com/orgrinrt/objkit"
@@ -35,7 +35,9 @@ repository = "https://github.com/orgrinrt/objkit"
 objkit-macros.workspace = true
 
 [features]
-default = []
+default = ["std"]
+std = ["objkit-macros/std"]
+no_std = ["objkit-macros/no_std"]
 
 [clippy]
 default-features = true
