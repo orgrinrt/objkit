@@ -26,8 +26,9 @@
 
 ## Usage
 
-This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole ready feature is the
-`clone_box` attribute, which enables cloning of trait objects with minimal abstraction overhead beyond the unavoidable dynamic dispatch.
+This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole stable feature is the
+`clone_box` attribute, which enables cloning of trait objects with minimal abstraction overhead beyond the unavoidable dynamic dispatch. The `obj_eq`, `as_super` and
+`as_any` attributes are exported and usable, but still unstable.
 
 ```rust
 use objkit::clone_box;
@@ -126,8 +127,8 @@ In rust, trait objects (`dyn Trait`) have fundamental limitations due to type er
     - Careful attention to object safety concerns
     - Sometimes unsafe code for downcasting via `Any` or similar mechanisms (with potential performance penalties)
 
-These limitations can make working with trait objects cumbersome in scenarios where operations like cloning (currently handled with the
-`clone_box` pattern macro), comparison (todo), or conversion (todo) are needed.
+These limitations can make working with trait objects cumbersome in scenarios where operations like cloning (handled with the
+`clone_box` pattern macro), comparison (the unstable `obj_eq` macro), or conversion (the unstable `as_super` and `as_any` macros) are needed.
 
 ## Pros & Cons
 
@@ -193,8 +194,15 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 This crate requires rust `1.64.0` or later.
 
-For practical reasons, we pin the msrv there to utilize cargo's stabilized
+For practical reasons, we pin the msrv there to use cargo's stabilized
 `workspace-inheritance` feature, but also to remain fairly compatible.
+
+### Feature flags
+
+The crate has two cargo features: `std` (enabled by default) uses `std::boxed::Box`, while
+`no_std` switches to `alloc::boxed::Box` for embedded or similarly constrained targets. Enable
+exactly one of the two. The `no_std` support is new and its replacement dependencies are still
+being evaluated; note that `as_any` does not yet work under `no_std`.
 
 ### Versioning policy
 
@@ -214,4 +222,4 @@ Whether you use this project, have learned something from it, or just like it, p
 
 `SPDX-License-Identifier: MPL-2.0`
 
-> You can check out the full license [here](https://github.com/orgrinrt/objkit/blob/master/LICENSE)
+> You can check out the full license [here](https://github.com/orgrinrt/objkit/blob/main/LICENSE)
