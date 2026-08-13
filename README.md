@@ -3,15 +3,11 @@
 <div align="center" style="text-align: center;">
 
 [![GitHub Stars](https://img.shields.io/github/stars/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/stargazers)
-[![Crates.io Total Downloads](https://img.shields.io/crates/d/objkit)](https://crates.io/crates/objkit)
 [![GitHub Issues](https://img.shields.io/github/issues/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/issues)
 [![Latest Version](https://img.shields.io/badge/version-0.0.2-red.svg?label=latest)](https://github.com/orgrinrt/objkit)
-![Crates.io Version](https://img.shields.io/crates/v/objkit?logoSize=auto&color=%23FDC700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Fobjkit)
-![Crates.io Size](https://img.shields.io/crates/size/objkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Fobjkit)
 ![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/objkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Fobjkit)
 
 > A toolkit providing convenient abstractions for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
-
 
 </div>
 
