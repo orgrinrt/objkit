@@ -24,7 +24,8 @@
 
 This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole stable feature is the
 `clone_box` attribute, which enables cloning of trait objects with minimal abstraction overhead beyond the unavoidable dynamic dispatch. The `obj_eq`, `as_super` and
-`as_any` attributes are exported and usable, but still unstable.
+`as_any` attributes work too, each with integration and edge-case tests, though their surface is
+not settled yet.
 
 ```rust
 use objkit::clone_box;
@@ -94,6 +95,17 @@ fn main() {
 You can use the `clone_box` method directly or access it through the standard `Clone` trait:
 
 ```rust
+# use objkit::clone_box;
+# #[clone_box]
+# trait Animal {
+#     fn speak(&self) -> String;
+# }
+# #[derive(Clone)]
+# struct Dog;
+# impl Animal for Dog {
+#     fn speak(&self) -> String { "Woof".to_string() }
+# }
+# let my_trait_object: Box<dyn Animal> = Box::new(Dog);
 // using standard clone trait (which the macro handles for you)
 let cloned = my_trait_object.clone();
 
@@ -124,7 +136,7 @@ In rust, trait objects (`dyn Trait`) have fundamental limitations due to type er
     - Sometimes unsafe code for downcasting via `Any` or similar mechanisms (with potential performance penalties)
 
 These limitations can make working with trait objects cumbersome in scenarios where operations like cloning (handled with the
-`clone_box` pattern macro), comparison (the unstable `obj_eq` macro), or conversion (the unstable `as_super` and `as_any` macros) are needed.
+`clone_box` pattern macro), comparison (the `obj_eq` macro), or conversion (the `as_super` and `as_any` macros) are needed.
 
 ## Pros & Cons
 
@@ -198,7 +210,8 @@ For practical reasons, we pin the msrv there to use cargo's stabilized
 The crate has two cargo features: `std` (enabled by default) uses `std::boxed::Box`, while
 `no_std` switches to `alloc::boxed::Box` for embedded or similarly constrained targets. Enable
 exactly one of the two. The `no_std` support is new and its replacement dependencies are still
-being evaluated; note that `as_any` does not yet work under `no_std`.
+being evaluated. `as_any` works under both: it names `core::any::Any`, which is the same type
+`std` re-exports.
 
 ### Versioning policy
 
