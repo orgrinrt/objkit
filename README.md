@@ -209,7 +209,10 @@ For practical reasons, we pin the msrv there to use cargo's stabilized
 
 The crate has two cargo features: `std` (enabled by default) uses `std::boxed::Box`, while
 `no_std` switches to `alloc::boxed::Box` for embedded or similarly constrained targets. Enable
-exactly one of the two. The `no_std` support is new and its replacement dependencies are still
+exactly one of the two. Because `std` is a default feature, reaching `no_std` means turning the
+defaults off as well: `objkit = { version = "0.0.2", default-features = false, features =
+["no_std"] }`. Leaving the defaults on and adding `no_std` enables both, which the macro crate
+rejects with a `compile_error!`. The `no_std` support is new and its replacement dependencies are still
 being evaluated. `as_any` works under both: it names `core::any::Any`, which is the same type
 `std` re-exports.
 
