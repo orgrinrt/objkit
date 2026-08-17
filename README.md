@@ -208,13 +208,23 @@ For practical reasons, we pin the msrv there to use cargo's stabilized
 ### Feature flags
 
 The crate has two cargo features: `std` (enabled by default) uses `std::boxed::Box`, while
-`no_std` switches to `alloc::boxed::Box` for embedded or similarly constrained targets. Enable
-exactly one of the two. Because `std` is a default feature, reaching `no_std` means turning the
-defaults off as well: `objkit = { version = "0.0.2", default-features = false, features =
-["no_std"] }`. Leaving the defaults on and adding `no_std` enables both, which the macro crate
-rejects with a `compile_error!`. The `no_std` support is new and its replacement dependencies are still
-being evaluated. `as_any` works under both: it names `core::any::Any`, which is the same type
-`std` re-exports.
+`no_std` is intended to switch to `alloc::boxed::Box` for embedded or similarly constrained
+targets. Exactly one of the two is meant to be on, and because `std` is a default feature,
+selecting `no_std` also means turning the defaults off.
+
+**`no_std` does not build today.** `cargo build --no-default-features --features no_std` fails
+while compiling `objkit-macros`, which applies `#![cfg_attr(feature = "no_std", no_std)]` to
+itself and then still calls `format!` and `to_string`. A procedural macro crate runs on the host
+at compile time, so it has no reason to be `no_std` in the first place; the flag it needs to
+propagate is the one choosing the `Box` path in the code it *generates*. Until that is separated,
+`std` (the default) is the only configuration that compiles, and `--no-default-features` alone and
+`--all-features` both fail as well.
+
+The `as_any` attribute is the one piece that is ready for the `no_std` case: it names
+`core::any::Any`, which is the same type `std` re-exports, and its expansion allocates nothing.
+The `obj_eq` attribute is not: its `no_std` arm expands to `siphasher` and `typeable` paths, and
+those are dependencies of the macro crate rather than of `objkit`, so they would not be in scope
+at the call site.
 
 ### Versioning policy
 
