@@ -4,6 +4,12 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 authors.workspace = true
+description = """
+The procedural macro implementations behind objkit: the clone_box, obj_eq, as_super and as_any trait object attributes
+"""
+license = "MPL-2.0"
+homepage = "https://github.com/orgrinrt/objkit"
+repository = "https://github.com/orgrinrt/objkit"
 
 [lib]
 proc-macro = true
