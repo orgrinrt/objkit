@@ -3,15 +3,11 @@
 <div align="center" style="text-align: center;">
 
 [![GitHub Stars](https://img.shields.io/github/stars/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/stargazers)
-[![Crates.io Total Downloads](https://img.shields.io/crates/d/objkit)](https://crates.io/crates/objkit)
 [![GitHub Issues](https://img.shields.io/github/issues/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/issues)
 [![Latest Version](https://img.shields.io/badge/version-0.0.2-red.svg?label=latest)](https://github.com/orgrinrt/objkit)
-![Crates.io Version](https://img.shields.io/crates/v/objkit?logoSize=auto&color=%23FDC700&link=https%3A%2F%2Fcrates.io%2Fcrates%2Fobjkit)
-![Crates.io Size](https://img.shields.io/crates/size/objkit?color=%23C27AFF&link=https%3A%2F%2Fcrates.io%2Fcrates%2Fobjkit)
 ![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/objkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Fobjkit)
 
 > A toolkit providing convenient abstractions for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
-
 
 </div>
 
@@ -26,8 +22,10 @@
 
 ## Usage
 
-This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole ready feature is the
-`clone_box` attribute, which enables cloning of trait objects with minimal abstraction overhead beyond the unavoidable dynamic dispatch.
+This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole stable feature is the
+`clone_box` attribute, which enables cloning of trait objects with minimal abstraction overhead beyond the unavoidable dynamic dispatch. The `obj_eq`, `as_super` and
+`as_any` attributes work too, each with integration and edge-case tests, though their surface is
+not settled yet.
 
 ```rust
 use objkit::clone_box;
@@ -97,6 +95,17 @@ fn main() {
 You can use the `clone_box` method directly or access it through the standard `Clone` trait:
 
 ```rust
+# use objkit::clone_box;
+# #[clone_box]
+# trait Animal {
+#     fn speak(&self) -> String;
+# }
+# #[derive(Clone)]
+# struct Dog;
+# impl Animal for Dog {
+#     fn speak(&self) -> String { "Woof".to_string() }
+# }
+# let my_trait_object: Box<dyn Animal> = Box::new(Dog);
 // using standard clone trait (which the macro handles for you)
 let cloned = my_trait_object.clone();
 
@@ -126,8 +135,8 @@ In rust, trait objects (`dyn Trait`) have fundamental limitations due to type er
     - Careful attention to object safety concerns
     - Sometimes unsafe code for downcasting via `Any` or similar mechanisms (with potential performance penalties)
 
-These limitations can make working with trait objects cumbersome in scenarios where operations like cloning (currently handled with the
-`clone_box` pattern macro), comparison (todo), or conversion (todo) are needed.
+These limitations can make working with trait objects cumbersome in scenarios where operations like cloning (handled with the
+`clone_box` pattern macro), comparison (the `obj_eq` macro), or conversion (the `as_super` and `as_any` macros) are needed.
 
 ## Pros & Cons
 
@@ -193,8 +202,29 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 This crate requires rust `1.64.0` or later.
 
-For practical reasons, we pin the msrv there to utilize cargo's stabilized
+For practical reasons, we pin the msrv there to use cargo's stabilized
 `workspace-inheritance` feature, but also to remain fairly compatible.
+
+### Feature flags
+
+The crate has two cargo features: `std` (enabled by default) uses `std::boxed::Box`, while
+`no_std` is intended to switch to `alloc::boxed::Box` for embedded or similarly constrained
+targets. Exactly one of the two is meant to be on, and because `std` is a default feature,
+selecting `no_std` also means turning the defaults off.
+
+**`no_std` does not build today.** `cargo build --no-default-features --features no_std` fails
+while compiling `objkit-macros`, which applies `#![cfg_attr(feature = "no_std", no_std)]` to
+itself and then still calls `format!` and `to_string`. A procedural macro crate runs on the host
+at compile time, so it has no reason to be `no_std` in the first place; the flag it needs to
+propagate is the one choosing the `Box` path in the code it *generates*. Until that is separated,
+`std` (the default) is the only configuration that compiles, and `--no-default-features` alone and
+`--all-features` both fail as well.
+
+The `as_any` attribute is the one piece that is ready for the `no_std` case: it names
+`core::any::Any`, which is the same type `std` re-exports, and its expansion allocates nothing.
+The `obj_eq` attribute is not: its `no_std` arm expands to `siphasher` and `typeable` paths, and
+those are dependencies of the macro crate rather than of `objkit`, so they would not be in scope
+at the call site.
 
 ### Versioning policy
 
@@ -214,4 +244,4 @@ Whether you use this project, have learned something from it, or just like it, p
 
 `SPDX-License-Identifier: MPL-2.0`
 
-> You can check out the full license [here](https://github.com/orgrinrt/objkit/blob/master/LICENSE)
+> You can check out the full license [here](https://github.com/orgrinrt/objkit/blob/main/LICENSE)

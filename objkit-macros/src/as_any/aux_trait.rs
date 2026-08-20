@@ -26,7 +26,7 @@ pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
     // Generate the auxiliary trait which provides the as_any method.
     let aux_trait = quote! {
         #vis trait #aux_trait_name #trait_generics {
-            fn as_any(&self) -> &dyn ::std::any::Any;
+            fn as_any(&self) -> &dyn ::core::any::Any;
         }
     };
 
@@ -36,7 +36,7 @@ pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
             #internal_generic: #trait_name #trait_generics + 'static,
         {
             #[inline]
-            fn as_any(&self) -> &dyn ::std::any::Any {
+            fn as_any(&self) -> &dyn ::core::any::Any {
                 self
             }
         }
