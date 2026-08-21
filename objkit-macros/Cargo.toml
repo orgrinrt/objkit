@@ -4,6 +4,9 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 authors.workspace = true
+readme = "../README.md"
+keywords = ["macro", "trait-object", "downcast", "clone", "dyn"]
+categories = ["rust-patterns", "development-tools::procedural-macro-helpers", "no-std"]
 description = """
 The procedural macro implementations behind objkit: the clone_box, obj_eq, as_super and as_any trait object attributes
 """
@@ -23,6 +26,10 @@ typeable = { version = "0.1", optional = true }
 siphasher = { version = "1.0.1", optional = true }
 
 [features]
+# Building this crate on its own used to reach neither `std_box` nor `alloc_box` and stop at
+# the `compile_error!` in `box_path`, so `cargo build -p objkit-macros` failed. The parent
+# crate always passed one, which is why it went unnoticed.
+default = ["std"]
 std_box = []
 alloc_box = []
 # the two main variants

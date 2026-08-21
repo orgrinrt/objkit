@@ -12,7 +12,7 @@ proc-macro2 = { version = "^1.0" }
 quote = { version = "^1.0", features = ["proc-macro"] }
 syn = { version = "^2.0.0", features = ["full"] }
 include_proc_macro = "2.0.6"
-objkit-macros = { path = "objkit-macros", version = "^0" }
+objkit-macros = { path = "objkit-macros", version = "^0", default-features = false }
 
 [package]
 name = "objkit"
@@ -39,16 +39,3 @@ default = ["std"]
 std = ["objkit-macros/std"]
 no_std = ["objkit-macros/no_std"]
 
-[clippy]
-default-features = true
-extra-plugins = [
-    "clippy::pedantic",
-    "clippy::cargo",
-    "+clippy::nursery",
-    "+clippy::style",
-    "+clippy::complexity",
-    "+clippy::perf",
-    "+clippy::correctness",
-    "+clippy::suspicious",
-    "+clippy::deprecated"
-]

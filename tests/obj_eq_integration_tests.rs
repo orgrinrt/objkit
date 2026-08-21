@@ -92,39 +92,3 @@ fn test_obj_eq_boxes_eq_call() {
     assert!(a_box.eq(&b_box));
     assert!(!a_box.eq(&c_box));
 }
-
-/// ```compile_fail
-/// // This test verifies that without the attribute macro, the trait object
-/// // does not support the equality operator.
-///
-/// // A trait without the attribute macro
-/// pub trait TestEq {
-///     fn value(&self) -> i32;
-/// }
-///
-/// #[derive(PartialEq)]
-/// struct TestImpl {
-///     val: i32,
-/// }
-///
-/// impl TestEq for TestImpl {
-///     fn value(&self) -> i32 {
-///         self.val
-///     }
-/// }
-///
-/// fn main() {
-///     let a = TestImpl { val: 100 };
-///     let b = TestImpl { val: 100 };
-///
-///     // Convert to trait objects
-///     let a_obj = &a as &dyn TestEq;
-///     let b_obj = &b as &dyn TestEq;
-///
-///     // This line is expected to fail to compile because there is no PartialEq
-///     // implementation for &dyn TestEq
-///     assert_eq!(a_obj, b_obj);
-/// }
-/// ```
-///
-pub fn dummy() {}

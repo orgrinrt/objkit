@@ -41,7 +41,7 @@ struct Circle {
 
 impl Shape for Circle {
     fn area(&self) -> f32 {
-        3.14159 * self.radius * self.radius
+        ::std::f32::consts::PI * self.radius * self.radius
     }
     fn name(&self) -> &str {
         "Circle"
@@ -140,7 +140,11 @@ mod tests {
         assert!(c1_ref != s_ref, "Circle and square should not be equal");
 
         // Test methods still work
-        assert!((c1_ref.area() - 78.53975).abs() < 0.00001);
+        // Stated as the relation rather than as a decimal, so it does not have to be
+        // recomputed by hand when the constant behind `area` changes. It did: this read
+        // 78.53975, which is 3.14159 times the radius squared rather than pi times it.
+        let expected = ::std::f32::consts::PI * 5.0 * 5.0;
+        assert!((c1_ref.area() - expected).abs() < 0.00001);
         assert_eq!(c1_ref.name(), "Circle");
         assert_eq!(s_ref.name(), "Square");
     }
