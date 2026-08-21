@@ -26,8 +26,27 @@
 #[cfg(feature = "no_std")]
 extern crate alloc;
 
+// Where the `obj_eq` expansion reaches its hasher under `no_std`.
+//
+// Re-exported rather than named at the expansion site, because the expansion lands in
+// the consumer's crate, where `::siphasher` resolves only if that consumer happens to
+// depend on it under that name, which nothing tells it to do. Reached through this crate
+// it resolves wherever this crate does.
+//
+// The type id needs no crate: `core::any::TypeId` has been there since 1.0. The
+// expansion used to name `::typeable::TypeId`, which never resolved at all, because that
+// item is a private re-import of `std::any::TypeId` inside a crate that is itself `std`.
+#[cfg(feature = "no_std")]
+#[doc(hidden)]
+pub use ::siphasher as __objkit_siphasher;
+
+
 pub use objkit_macros::as_any;
 pub use objkit_macros::as_super;
+// A boxed clone is exactly what an allocator is for, so there is nothing to offer
+// without one. Absent rather than present-and-failing, so a consumer finds out at the
+// import rather than inside an expansion.
+#[cfg(not(feature = "no_alloc"))]
 pub use objkit_macros::clone_box;
 /// Compares two trait objects of a trait annotated with [`macro@obj_eq`].
 ///

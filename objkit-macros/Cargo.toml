@@ -22,7 +22,6 @@ quote.workspace = true
 syn.workspace = true
 proc-macro2.workspace = true
 include_proc_macro.workspace = true
-typeable = { version = "0.1", optional = true }
 siphasher = { version = "1.0.1", optional = true }
 
 [features]
@@ -34,4 +33,9 @@ std_box = []
 alloc_box = []
 # the two main variants
 std = ["std_box"]
-no_std = ["typeable", "siphasher", "alloc_box"]
+no_std = ["alloc_box"]
+# Implies `no_std`. Compiles out what cannot exist without an allocator: `clone_box` is a
+# boxed clone and refuses, and `obj_eq` keeps its reference impls and drops the two over
+# `Box<dyn Trait>`, which were a convenience over them. `as_any` and `as_super` are
+# unaffected, because neither ever needed one.
+no_alloc = ["no_std"]

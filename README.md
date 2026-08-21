@@ -238,6 +238,33 @@ Whether you use this project, have learned something from it, or just like it, p
 
 <a href="https://buymeacoffee.com/orgrinrt" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
 
+## Allocation
+
+Three positions, and each is a feature. `tests/feature_matrix.rs` compiles a real consumer
+crate under every one, which is the only place any of this can be seen: the macros expand
+somewhere else.
+
+| Feature | What is available |
+|---|---|
+| `std` | Everything. |
+| `no_std` | Everything, against `alloc`. |
+| `no_alloc` | What needs no allocator at all. |
+
+`no_alloc` implies `no_std` and is a real subset rather than a rename:
+
+- `as_any` and `as_super` are untouched, because neither ever needed an allocator.
+- `obj_eq` still compares `&dyn Trait`, which is the operation. It loses the two impls over
+  `Box<dyn Trait>`, which were a convenience over that.
+- `clone_box` is absent. A boxed clone is exactly what an allocator is for, so there is
+  nothing to offer without one, and it is gone at the import rather than failing inside an
+  expansion.
+
+The `no_std` path for `obj_eq` had never worked. It reached for `typeable::TypeId`, which is
+a private re-import of `std::any::TypeId` inside a crate that is itself `std`, so the path
+did not resolve and the crate it came from defeated the purpose twice over. `core::any::TypeId`
+has been in core since 1.0 and is what it uses now, which drops that dependency entirely.
+Nothing had caught it because no test compiled a `#![no_std]` consumer that used `obj_eq`.
+
 ## License
 
 > The project is licensed under the **Mozilla Public License 2.0**.
