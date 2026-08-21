@@ -7,4 +7,4 @@
 #
 # The minimum is still declared, and `tests/feature_matrix.rs` checks it.
 [toolchain]
-channel = "stable"
+channel = "nightly-2026-05-28"
