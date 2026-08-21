@@ -51,3 +51,10 @@ no_std = ["objkit-macros/no_std", "dep:siphasher"]
 # `Box<dyn Trait>`; `as_any` and `as_super` are unaffected.
 no_alloc = ["no_std", "objkit-macros/no_alloc"]
 
+
+[dev-dependencies]
+# For `examples/a_plugin_registry.rs`, which is the one example here that is about several of
+# these crates working together rather than about this one. Dev-only: nothing in the library
+# reaches for either.
+highroller = { git = "https://github.com/orgrinrt/highroller.git", branch = "dev" }
+str_extensions = { git = "https://github.com/orgrinrt/str_extensions.git", branch = "dev" }

@@ -99,3 +99,74 @@ fn all_four_together_shows_each_operation_working() {
         "two different concrete types compared equal:\n{out}",
     );
 }
+
+#[test]
+fn every_example_in_the_directory_is_covered_here() {
+    // Without this, adding an example and forgetting to test it is invisible: every
+    // test here still passes and the new file is never run.
+    let mut covered = [
+        "all_four_together",
+        "a_plugin_registry",
+        "as_any",
+        "as_super",
+        "clone_box",
+        "obj_eq",
+    ];
+    covered.sort_unstable();
+
+    let mut present: Vec<String> =
+        std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/examples"))
+            .expect("the examples directory")
+            .filter_map(Result::ok)
+            .filter(|entry| entry.path().extension().is_some_and(|x| x == "rs"))
+            .map(|entry| {
+                entry
+                    .path()
+                    .file_stem()
+                    .expect("a file stem")
+                    .to_string_lossy()
+                    .into_owned()
+            })
+            .collect();
+    present.sort();
+
+    assert_eq!(present, covered);
+}
+
+#[test]
+fn the_plugin_registry_shows_four_crates_doing_one_job() {
+    // The composed example, and the assertions are on the parts that need more than
+    // one crate. Anything provable from objkit alone is covered by the four
+    // above.
+    let out = run_example("a_plugin_registry");
+
+    // str_extensions: two names, spelled differently by their authors, under one
+    // key.
+    assert!(
+        out.contains("declared HTTPCacheWarmer      -> key http_cache_warmer"),
+        "the normalisation did not happen:\n{out}",
+    );
+    assert!(
+        out.contains("declared metrics-collector    -> key metrics_collector"),
+        "a differently-spelled name did not reach the same shape:\n{out}",
+    );
+
+    // objkit: the concrete type came back out of the trait object, and the wrong
+    // one did not.
+    assert!(out.contains("is a CacheWarmer over 512 entries"));
+    assert!(out.contains("is a MetricsCollector at 30s"));
+    assert!(
+        out.contains("asking the first for the wrong type: None"),
+        "the refusal is what makes the recovery mean anything:\n{out}",
+    );
+
+    // objkit again: a trait object cloned without knowing what is behind it, and
+    // the clone kept its concrete type rather than becoming some erased thing.
+    assert!(out.contains("the clone kept its concrete type: true"));
+
+    // highroller: distinct ids with nothing tracking them.
+    assert!(
+        out.contains("2 plugins, 2 distinct ids"),
+        "the ids collided, which is the one thing a rolling index must not do here:\n{out}",
+    );
+}
