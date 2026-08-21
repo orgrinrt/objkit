@@ -45,4 +45,21 @@ fn main() {
     } else {
         println!("Downcast failed");
     }
+
+    // The refusal, which is the half worth seeing: a downcast to the wrong concrete
+    // type answers `None` rather than doing something. With only the succeeding
+    // case, the example shows that `as_any` returns something and not that it
+    // checks anything.
+    if animal.as_any().downcast_ref::<Cat>().is_some() {
+        println!("Downcast to Cat: unreachable, this animal is a Dog");
+    } else {
+        println!("Downcast to Cat refused, which is what makes the one above mean something");
+    }
+
+    let cat: Box<dyn Animal> = Box::new(Cat {
+        name: "Momo".to_string(),
+    });
+    if let Some(cat_ref) = cat.as_any().downcast_ref::<Cat>() {
+        println!("Downcasted Cat: {}", cat_ref.speak());
+    }
 }

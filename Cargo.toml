@@ -4,7 +4,10 @@ members = ["objkit-macros"]
 [workspace.package]
 version = "0.0.2"
 edition = "2021"
-rust-version = "1.64.0"
+# 1.64.0 builds this crate's own source, and quote 1.0.47 does not, so 1.71 is where a
+# fresh resolve actually works. The lower number held only for a build resolving against
+# an existing lock file, which is not what a new consumer does.
+rust-version = "1.71"
 authors = ["orgrinrt", "Hiisi Digital"]
 
 [workspace.dependencies]
@@ -33,9 +36,18 @@ repository = "https://github.com/orgrinrt/objkit"
 
 [dependencies]
 objkit-macros.workspace = true
+# Only under `no_std`, and re-exported rather than used here: the `obj_eq` expansion
+# needs a hasher that does not come from `std`, and reaches it through this crate so a
+# consumer does not have to depend on it itself. The type id comes from `core::any`,
+# which needs no crate.
+siphasher = { version = "1.0.1", optional = true }
 
 [features]
 default = ["std"]
 std = ["objkit-macros/std"]
-no_std = ["objkit-macros/no_std"]
+no_std = ["objkit-macros/no_std", "dep:siphasher"]
+# Implies `no_std`. `clone_box` is gone under it, because a boxed clone is exactly what an
+# allocator is for; `obj_eq` keeps comparing `&dyn Trait` and loses only the two impls over
+# `Box<dyn Trait>`; `as_any` and `as_super` are unaffected.
+no_alloc = ["no_std", "objkit-macros/no_alloc"]
 

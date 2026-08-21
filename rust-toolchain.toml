@@ -1,2 +1,10 @@
+# Stable, not the minimum.
+#
+# This pinned `1.64.0`, which is the crate's declared minimum, so every build here was an
+# MSRV build and none was ever a current one. It also made the crate untestable against a
+# consumer: a fresh resolve picks up quote 1.0.47, which needs 1.71, so any throwaway crate
+# built against this one failed on the toolchain rather than on anything being wrong.
+#
+# The minimum is still declared, and `tests/feature_matrix.rs` checks it.
 [toolchain]
-channel = "1.64.0"
+channel = "nightly-2026-05-28"

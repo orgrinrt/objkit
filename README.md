@@ -149,17 +149,17 @@ These limitations can make working with trait objects cumbersome in scenarios wh
    Creates auxiliary trait implementations that work with rust's type system to keep static dispatch for concrete types, only using dynamic dispatch at trait object boundaries where it's unavoidable.
 
 2. **Static type guarantees**:
-   Maintains, where possible, rust's type system through trait bounds, for example for the clone_box pattern, by enforcing implementors be
+   Maintains, where possible, rust's type system through trait bounds, for example for the `clone_box` pattern, by enforcing implementors be
    `Clone + 'static` without runtime checks.
 3. **Minimal overhead abstractions**:
    ~~Introduces no overhead beyond the inherent dynamic dispatch required when working with trait objects. Avoids additional indirection
    layers or heap allocations that would degrade performance compared to a manually written implementation.~~ **NOTE: right now this is a
    work in progress and does not necessarily hold true**
 4. **Reduces manual boilerplate**:
-   Replaces error-prone manual auxiliary traits, blanket implementations, and explicit method forwarding typically needed for the clone_box pattern.
+   Replaces error-prone manual auxiliary traits, blanket implementations, and explicit method forwarding typically needed for the `clone_box` pattern.
 
 5. **Optimized dispatch implementation**:
-   Implements patterns like clone_box using direct trait method calls rather than type erasure techniques such as
+   Implements patterns like `clone_box` using direct trait method calls rather than type erasure techniques such as
    `Any` downcasting. This approach produces more analyzable IR for compiler backends, avoiding additional optimization barriers beyond the inherent limitations of trait objects.
 
 6. **Centralized implementation**:
@@ -180,7 +180,7 @@ These limitations can make working with trait objects cumbersome in scenarios wh
    The auto-generated implementations may make it less obvious what's happening under the hood compared to manual implementations. But that's also a pro. It's a two-edged sword.
 
 4. **Still Developing Features**:
-   Currently only implements the clone_box pattern, with other patterns still in planning.
+   Currently only implements the `clone_box` pattern, with other patterns still in planning.
 
 5. **Trait Object Limitations**:
    Still bound by rust's fundamental trait object constraints. Not a magic bullet, just a convenience for some common patterns.
@@ -237,6 +237,33 @@ Patch versions are backwards compatible, so using version specifiers such as `~x
 Whether you use this project, have learned something from it, or just like it, please consider supporting it by buying me a coffee, so I can dedicate more time on open-source projects like this :)
 
 <a href="https://buymeacoffee.com/orgrinrt" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+
+## Allocation
+
+Three positions, and each is a feature. `tests/feature_matrix.rs` compiles a real consumer
+crate under every one, which is the only place any of this can be seen: the macros expand
+somewhere else.
+
+| Feature | What is available |
+|---|---|
+| `std` | Everything. |
+| `no_std` | Everything, against `alloc`. |
+| `no_alloc` | What needs no allocator at all. |
+
+`no_alloc` implies `no_std` and is a real subset rather than a rename:
+
+- `as_any` and `as_super` are untouched, because neither ever needed an allocator.
+- `obj_eq` still compares `&dyn Trait`, which is the operation. It loses the two impls over
+  `Box<dyn Trait>`, which were a convenience over that.
+- `clone_box` is absent. A boxed clone is exactly what an allocator is for, so there is
+  nothing to offer without one, and it is gone at the import rather than failing inside an
+  expansion.
+
+The `no_std` path for `obj_eq` had never worked. It reached for `typeable::TypeId`, which is
+a private re-import of `std::any::TypeId` inside a crate that is itself `std`, so the path
+did not resolve and the crate it came from defeated the purpose twice over. `core::any::TypeId`
+has been in core since 1.0 and is what it uses now, which drops that dependency entirely.
+Nothing had caught it because no test compiled a `#![no_std]` consumer that used `obj_eq`.
 
 ## License
 

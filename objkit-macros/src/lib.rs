@@ -4,13 +4,15 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-// This crate is not `no_std` and cannot be: a procedural macro runs inside the compiler on
-// the host, and syn, quote and proc-macro2 all use std. It used to carry
-// `#![cfg_attr(feature = "no_std", no_std)]`, which took `format!`, `Vec` and `ToString`
-// away from its own source, so `objkit` built with `no_std` did not compile at all.
+// This crate is not `no_std` and cannot be: a procedural macro runs inside the
+// compiler on the host, and syn, quote and proc-macro2 all use std. It used to
+// carry `#![cfg_attr(feature = "no_std", no_std)]`, which took `format!`, `Vec`
+// and `ToString` away from its own source, so `objkit` built with `no_std` did
+// not compile at all.
 //
-// What the feature actually selects is which `Box` the *generated* code names, which is
-// `box_path` below and has nothing to do with this crate's own prelude.
+// What the feature actually selects is which `Box` the *generated* code names,
+// which is `box_path` below and has nothing to do with this crate's own
+// prelude.
 
 use include_proc_macro::macros;
 use quote::quote;
@@ -35,28 +37,38 @@ fn auxiliary_trait_name(trait_name: Option<&syn::Ident>, postfix: &str) -> syn::
     )
 }
 
+// The two features stay exclusive and stay refused, because `objkit` puts
+// `#![no_std]` on itself under one of them and cannot be both. What they no
+// longer do is select a path: see `box_path` below.
+#[cfg(all(feature = "std_box", feature = "alloc_box"))]
+compile_error!(
+    "objkit's `std` and `no_std` features are exclusive, and both are on. `std` is the \
+     default, so selecting `no_std` also needs `default-features = false`. (Reported \
+     here as `std_box` and `alloc_box`, which is what objkit forwards them to.)"
+);
+
+#[cfg(all(not(feature = "std_box"), not(feature = "alloc_box")))]
+compile_error!(
+    "objkit needs one of its two features and has neither. `std` is the default; with \
+     `default-features = false`, add `features = [\"no_std\"]`. (Reported here as \
+     `std_box` and `alloc_box`, which is what objkit forwards them to.)"
+);
+
 #[inline]
 fn box_path() -> TokenStream2 {
-    #[cfg(all(not(feature = "std_box"), feature = "alloc_box"))]
+    // Through this crate's facade rather than through `::alloc` or `::std`
+    // directly. The expansion lands in the consumer's crate, where
+    // `::alloc::boxed::Box` resolves only if that consumer declared `extern
+    // crate alloc`, which a plain `std` crate has no reason to have done, and
+    // `::std::boxed::Box` resolves only if it is not `#![no_std]`. `objkit`
+    // declares `alloc` itself and re-exports the name, so one path serves both.
+    //
+    // It used to be selected by the feature, which is why the examples could not be
+    // built under `no_std`: they are ordinary `std` binaries, and the expansion
+    // named a crate they had never declared.
     quote! {
-        ::alloc::boxed::Box
+        ::objkit::__objkit_box
     }
-    #[cfg(feature = "std_box")]
-    quote! {
-        ::std::boxed::Box
-    }
-    #[cfg(all(feature = "std_box", feature = "alloc_box"))]
-    compile_error!(
-        "objkit's `std` and `no_std` features are exclusive, and both are on. `std` is the \
-         default, so selecting `no_std` also needs `default-features = false`. (Reported \
-         here as `std_box` and `alloc_box`, which is what objkit forwards them to.)"
-    );
-    #[cfg(all(not(feature = "std_box"), not(feature = "alloc_box")))]
-    compile_error!(
-        "objkit needs one of its two features and has neither. `std` is the default; with \
-         `default-features = false`, add `features = [\"no_std\"]`. (Reported here as \
-         `std_box` and `alloc_box`, which is what objkit forwards them to.)"
-    );
 }
 
 fn merged_generics(
@@ -93,12 +105,14 @@ fn appended_generics(generics: &syn::Generics, new_param: &syn::Ident) -> syn::G
     merged_generics(generics, &parse_quote!(<#new_param>))
 }
 
-/// Refuses a trait carrying an associated type, for the macros that must form `dyn Trait`.
+/// Refuses a trait carrying an associated type, for the macros that must form
+/// `dyn Trait`.
 ///
-/// `dyn T` is not a type when `T` has an unspecified associated type, and a macro cannot
-/// know which concrete type the caller meant. Left alone, the generated code fails with
-/// `E0191` spanned inside an expansion the caller cannot read. `as_any` is unaffected,
-/// because the only trait object it forms is `dyn Any`.
+/// `dyn T` is not a type when `T` has an unspecified associated type, and a
+/// macro cannot know which concrete type the caller meant. Left alone, the
+/// generated code fails with `E0191` spanned inside an expansion the caller
+/// cannot read. `as_any` is unaffected, because the only trait object it forms
+/// is `dyn Any`.
 fn refuse_associated_types(
     original_trait: &syn::ItemTrait,
     macro_name: &str,
@@ -106,9 +120,11 @@ fn refuse_associated_types(
     let associated: Vec<&syn::TraitItemType> = original_trait
         .items
         .iter()
-        .filter_map(|item| match item {
-            syn::TraitItem::Type(ty) => Some(ty),
-            _ => None,
+        .filter_map(|item| {
+            match item {
+                syn::TraitItem::Type(ty) => Some(ty),
+                _ => None,
+            }
         })
         .collect();
 
@@ -126,14 +142,11 @@ fn refuse_associated_types(
 
 /// The annotated trait's own where clause, with one more predicate on the end.
 ///
-/// The generated impls each need a bound of their own, and every one of them used to write
-/// that bound as the whole `where` clause, which dropped whatever the annotated trait had
-/// declared. A trait written `trait T<A> where A: Clone` then produced impls that did not
-/// know `A: Clone`.
-fn aux_where_clause(
-    generics: &syn::Generics,
-    extra: syn::WherePredicate,
-) -> syn::WhereClause {
+/// The generated impls each need a bound of their own, and every one of them
+/// used to write that bound as the whole `where` clause, which dropped whatever
+/// the annotated trait had declared. A trait written `trait T<A> where A:
+/// Clone` then produced impls that did not know `A: Clone`.
+fn aux_where_clause(generics: &syn::Generics, extra: syn::WherePredicate) -> syn::WhereClause {
     let mut clause = generics
         .where_clause
         .clone()
@@ -176,8 +189,8 @@ mod tests {
     fn a_trait_with_an_associated_type_is_refused() {
         let refusal = refuse_associated_types(&parse("trait T { type A; }"), "clone_box")
             .expect("an associated type is refused");
-        // A token stream renders with spaces around punctuation, so the path is compared
-        // with the whitespace taken out rather than as it prints.
+        // A token stream renders with spaces around punctuation, so the path is
+        // compared with the whitespace taken out rather than as it prints.
         let rendered: String = refusal.to_string().split_whitespace().collect();
         assert!(
             rendered.starts_with("::core::compile_error!"),
@@ -187,10 +200,9 @@ mod tests {
 
     #[test]
     fn the_refusal_names_the_macro_the_trait_and_the_associated_type() {
-        let refusal =
-            refuse_associated_types(&parse("trait Carrier { type Item; }"), "as_super")
-                .expect("an associated type is refused")
-                .to_string();
+        let refusal = refuse_associated_types(&parse("trait Carrier { type Item; }"), "as_super")
+            .expect("an associated type is refused")
+            .to_string();
 
         for expected in ["as_super", "Carrier", "Item", "as_any"] {
             assert!(

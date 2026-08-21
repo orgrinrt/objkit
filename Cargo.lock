@@ -13,6 +13,7 @@ name = "objkit"
 version = "0.0.2"
 dependencies = [
  "objkit-macros",
+ "siphasher",
 ]
 
 [[package]]
@@ -24,7 +25,6 @@ dependencies = [
  "quote",
  "siphasher",
  "syn",
- "typeable",
 ]
 
 [[package]]
@@ -61,12 +61,6 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
-
-[[package]]
-name = "typeable"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1410f6f91f21d1612654e7cc69193b0334f909dcf2c790c4826254fbb86f8887"
 
 [[package]]
 name = "unicode-ident"
