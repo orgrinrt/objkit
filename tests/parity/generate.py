@@ -61,17 +61,22 @@ for mac in MACROS:
         count += 1
     cells.append("}\n\n")
 
-body = header + "".join(cells)
-body += f"""/// The matrix is the assertion: this file compiling is {count} cells passing.
-///
-/// Counted here so that a generator producing an empty file fails rather than passing
-/// silently, which is the way a generated suite usually dies.
-#[test]
-fn every_cell_in_the_matrix_compiled() {{
-    assert_eq!(CELLS, {count}, "the generator wrote a different number of cells");
-}}
+# The generator refuses to write an empty file, which is where the guard belongs. A guard
+# inside the generated file can only compare numbers this script emitted, and two numbers
+# from one variable agree whatever the variable is; an earlier version asserted exactly
+# that and passed on an empty matrix.
+if count == 0:
+    raise SystemExit(
+        "generate.py: no cells. The matrix is the assertion, so an empty file would be a "
+        "suite that passes by testing nothing. Check SHAPES and MACROS."
+    )
 
-const CELLS: usize = {count};
+body = header + "".join(cells)
+body += f"""// The matrix is the assertion: this file compiling is {count} cells passing, one per
+// macro per trait shape. There is no `#[test]` here on purpose. A test in this file could
+// only compare numbers the generator wrote, and any two of those agree by construction;
+// the guard that matters is the generator refusing to produce an empty file, which is in
+// generate.py rather than here.
 """
 
 out = pathlib.Path("tests/parity_matrix.rs")

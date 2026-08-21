@@ -102,13 +102,8 @@ mod obj_eq_shapes {
     pub trait DefaultMethod { fn f(&self) -> u8 { 1 } }
 }
 
-/// The matrix is the assertion: this file compiling is 37 cells passing.
-///
-/// Counted here so that a generator producing an empty file fails rather than passing
-/// silently, which is the way a generated suite usually dies.
-#[test]
-fn every_cell_in_the_matrix_compiled() {
-    assert_eq!(CELLS, 37, "the generator wrote a different number of cells");
-}
-
-const CELLS: usize = 37;
+// The matrix is the assertion: this file compiling is 37 cells passing, one per
+// macro per trait shape. There is no `#[test]` here on purpose. A test in this file could
+// only compare numbers the generator wrote, and any two of those agree by construction;
+// the guard that matters is the generator refusing to produce an empty file, which is in
+// generate.py rather than here.
