@@ -11,6 +11,23 @@
 
 </div>
 
+## Examples
+
+`examples/` runs. `cargo test` executes every one and asserts on what it printed.
+
+| Example | What it shows |
+|---|---|
+| `as_any.rs` | recovering a concrete type from a trait object, and the downcast that refuses |
+| `as_super.rs` | two implementors held behind one supertrait reference |
+| `clone_box.rs` | copying a trait object without knowing what is behind it |
+| `obj_eq.rs` | comparing trait objects |
+| `all_four_together.rs` | the four attributes on one trait |
+| `a_plugin_registry.rs` | **four crates doing one job**: `objkit` for the trait objects, `highroller` for ids, `str_extensions` to file `HTTPCacheWarmer` and `metrics-collector` under one key |
+
+The last one is the only example here that is about something other than this crate. It exists
+because the shape it shows, a heterogeneous registry whose entries stay recoverable, needs more
+than one of these crates and is not visible from any of them alone.
+
 ## Features
 
 | Feature     | Status      | Description                                 |

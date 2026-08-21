@@ -3,17 +3,48 @@
 version = 3
 
 [[package]]
+name = "aho-corasick"
+version = "1.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c982642fa9e8606056828ee9a8505737230110bb1099153c79efe865c59d12ba"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
+name = "highroller"
+version = "0.1.1"
+source = "git+https://github.com/orgrinrt/highroller.git?branch=dev#0d8d4f0a90d0bd2f62568d97080042e7cc2df3cb"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
 name = "include_proc_macro"
 version = "2.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dcf8fd6689853bd1436aa7ba5634c5f9b2a0c25c67907aa81ef6193b3799369f"
 
 [[package]]
+name = "lazy_static"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+
+[[package]]
+name = "memchr"
+version = "2.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+
+[[package]]
 name = "objkit"
 version = "0.0.2"
 dependencies = [
+ "highroller",
  "objkit-macros",
  "siphasher",
+ "str_extensions",
 ]
 
 [[package]]
@@ -46,10 +77,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "regex"
+version = "1.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
+dependencies = [
+ "aho-corasick",
+ "memchr",
+ "regex-automata",
+ "regex-syntax",
+]
+
+[[package]]
+name = "regex-automata"
+version = "0.4.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
+dependencies = [
+ "aho-corasick",
+ "memchr",
+ "regex-syntax",
+]
+
+[[package]]
+name = "regex-syntax"
+version = "0.8.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+
+[[package]]
 name = "siphasher"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56199f7ddabf13fe5074ce809e7d3f42b42ae711800501b5b16ea82ad029c39d"
+
+[[package]]
+name = "str_extensions"
+version = "0.0.2"
+source = "git+https://github.com/orgrinrt/str_extensions.git?branch=dev#297ee545dea65d82c26337e5e6084985438f6702"
+dependencies = [
+ "word_bounds",
+]
 
 [[package]]
 name = "syn"
@@ -67,3 +135,11 @@ name = "unicode-ident"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
+
+[[package]]
+name = "word_bounds"
+version = "0.0.2"
+source = "git+https://github.com/orgrinrt/word_bounds.git?branch=dev#396dd8921d1c0a67afcc53aba4aaae4307f65385"
+dependencies = [
+ "regex",
+]
