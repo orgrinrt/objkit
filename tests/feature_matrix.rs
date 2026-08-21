@@ -4,12 +4,13 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-//! Each feature configuration either builds, or refuses in words a consumer can act on.
+//! Each feature configuration either builds, or refuses in words a consumer can
+//! act on.
 //!
-//! `no_std` did not build at all before this test existed. `objkit-macros` carried
-//! `#![cfg_attr(feature = "no_std", no_std)]`, which a procedural macro crate cannot honour,
-//! since it runs on the host inside the compiler. Nothing caught it because every test ran
-//! under the default features.
+//! `no_std` did not build at all before this test existed. `objkit-macros`
+//! carried `#![cfg_attr(feature = "no_std", no_std)]`, which a procedural macro
+//! crate cannot honour, since it runs on the host inside the compiler. Nothing
+//! caught it because every test ran under the default features.
 
 use std::process::Command;
 
@@ -56,21 +57,20 @@ fn neither_feature_is_refused_in_the_consumer_s_own_vocabulary() {
 
 #[test]
 fn both_features_at_once_are_refused_with_the_reason() {
-    // `--features no_std` without `--no-default-features` leaves `std` on as well, which is
-    // the mistake this message exists for.
+    // `--features no_std` without `--no-default-features` leaves `std` on as well,
+    // which is the mistake this message exists for.
     let (ok, err) = check(&["--features", "no_std"]);
     assert!(!ok, "both features at once cannot build");
-    assert!(
-        err.contains("exclusive"),
-        "the refusal says why:\n{err}"
-    );
+    assert!(err.contains("exclusive"), "the refusal says why:\n{err}");
 }
 
-/// Builds a throwaway crate whose body is `body`, against this crate at `features`.
+/// Builds a throwaway crate whose body is `body`, against this crate at
+/// `features`.
 ///
-/// The allocation axis cannot be seen from inside this crate: the macros expand in somebody
-/// else's, and `no_alloc` is a claim about what those expansions may name. Every case below
-/// therefore compiles a consumer rather than checking this crate.
+/// The allocation axis cannot be seen from inside this crate: the macros expand
+/// in somebody else's, and `no_alloc` is a claim about what those expansions
+/// may name. Every case below therefore compiles a consumer rather than
+/// checking this crate.
 fn consumer_compiles(name: &str, features: &str, attrs: &str, body: &str) -> (bool, String) {
     use std::fs;
     use std::path::PathBuf;
@@ -78,8 +78,11 @@ fn consumer_compiles(name: &str, features: &str, attrs: &str, body: &str) -> (bo
     let root = PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/target/consumers")).join(name);
     fs::create_dir_all(root.join("src")).expect("the consumer directory");
 
-    let features_list =
-        features.split(',').map(|f| format!("\"{f}\"")).collect::<Vec<_>>().join(", ");
+    let features_list = features
+        .split(',')
+        .map(|f| format!("\"{f}\""))
+        .collect::<Vec<_>>()
+        .join(", ");
 
     fs::write(
         root.join("Cargo.toml"),
@@ -92,17 +95,26 @@ fn consumer_compiles(name: &str, features: &str, attrs: &str, body: &str) -> (bo
     )
     .expect("the consumer manifest");
 
-    fs::write(root.join("src").join("lib.rs"), format!("{attrs}\n{body}\n"))
-        .expect("the consumer source");
+    fs::write(
+        root.join("src").join("lib.rs"),
+        format!("{attrs}\n{body}\n"),
+    )
+    .expect("the consumer source");
 
     let output = Command::new(env!("CARGO"))
         .args(["check", "--quiet"])
         .current_dir(&root)
-        .env("CARGO_TARGET_DIR", concat!(env!("CARGO_MANIFEST_DIR"), "/target/consumers/target"))
+        .env(
+            "CARGO_TARGET_DIR",
+            concat!(env!("CARGO_MANIFEST_DIR"), "/target/consumers/target"),
+        )
         .output()
         .expect("cargo runs");
 
-    (output.status.success(), String::from_utf8_lossy(&output.stderr).to_string())
+    (
+        output.status.success(),
+        String::from_utf8_lossy(&output.stderr).to_string(),
+    )
 }
 
 /// A trait with `obj_eq`, and two implementors to compare.
@@ -127,8 +139,9 @@ fn the_allocation_axis_builds_under_every_selection() {
 
 #[test]
 fn obj_eq_compares_references_under_every_selection() {
-    // The operation is comparing two `&dyn Trait`, and it survives `no_alloc` because it
-    // never needed an allocator. Only the convenience impls over `Box<dyn Trait>` did.
+    // The operation is comparing two `&dyn Trait`, and it survives `no_alloc`
+    // because it never needed an allocator. Only the convenience impls over
+    // `Box<dyn Trait>` did.
     let body =
         format!("{COMPARABLE}\npub fn same(a: &dyn Value, b: &dyn Value) -> bool {{ a == b }}\n");
 
@@ -148,25 +161,36 @@ fn obj_eq_compares_boxes_only_where_there_is_an_allocator() {
     let attrs = "#![no_std]\nextern crate alloc;";
 
     let (ok, err) = consumer_compiles("obj_eq_boxed_no_std", "no_std", attrs, &body);
-    assert!(ok, "`PartialEq for Box<dyn Value>` exists under `no_std`:\n{err}");
+    assert!(
+        ok,
+        "`PartialEq for Box<dyn Value>` exists under `no_std`:\n{err}"
+    );
 
-    // The half a build check cannot reach: an impl emitted anyway passes every positive
-    // test above, and a feature that gates nothing is invisible to all of them.
+    // The half a build check cannot reach: an impl emitted anyway passes every
+    // positive test above, and a feature that gates nothing is invisible to all
+    // of them.
     let (ok, _) = consumer_compiles("obj_eq_boxed_no_alloc", "no_alloc", attrs, &body);
-    assert!(!ok, "`PartialEq for Box<dyn Value>` must be absent under `no_alloc`");
+    assert!(
+        !ok,
+        "`PartialEq for Box<dyn Value>` must be absent under `no_alloc`"
+    );
 }
 
 #[test]
 fn clone_box_is_absent_under_no_alloc() {
     let body = "#[objkit::clone_box]\npub trait Shape {\n    fn sides(&self) -> u8;\n}\n";
 
-    let (ok, err) =
-        consumer_compiles("clone_box_present", "no_std", "#![no_std]\nextern crate alloc;", body);
+    let (ok, err) = consumer_compiles(
+        "clone_box_present",
+        "no_std",
+        "#![no_std]\nextern crate alloc;",
+        body,
+    );
     assert!(ok, "`clone_box` is present under `no_std`:\n{err}");
 
-    // A boxed clone is exactly what an allocator is for, so there is nothing to offer
-    // without one. Absent rather than present-and-failing, so a consumer finds out at the
-    // import rather than inside an expansion.
+    // A boxed clone is exactly what an allocator is for, so there is nothing to
+    // offer without one. Absent rather than present-and-failing, so a consumer
+    // finds out at the import rather than inside an expansion.
     let (ok, err) = consumer_compiles("clone_box_absent", "no_alloc", "#![no_std]", body);
     assert!(!ok, "`clone_box` must be absent under `no_alloc`");
     assert!(err.contains("clone_box"), "the error names it:\n{err}");
@@ -174,9 +198,10 @@ fn clone_box_is_absent_under_no_alloc() {
 
 #[test]
 fn as_any_and_as_super_are_unaffected_by_the_allocation_axis() {
-    // The control for the two tests above. Without it they would pass just as well against
-    // a `no_alloc` that had removed everything, and neither of these ever needed an
-    // allocator, so neither may change across the three positions.
+    // The control for the two tests above. Without it they would pass just as well
+    // against a `no_alloc` that had removed everything, and neither of these
+    // ever needed an allocator, so neither may change across the three
+    // positions.
     let body = r#"
 #[objkit::as_any]
 pub trait Named {

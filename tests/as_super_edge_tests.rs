@@ -8,6 +8,19 @@
 #[cfg(feature = "no_std")]
 extern crate alloc;
 
+// The `no_std` prelude has neither, so declaring `alloc` is only half of it:
+// the names have to be brought in too. Without this the crate builds under
+// `no_std` and its tests do not, which is the shape that hides: `cargo build`
+// is green and only `cargo test` says otherwise.
+#[cfg(feature = "no_std")]
+use alloc::boxed::Box;
+#[cfg(feature = "no_std")]
+use alloc::format;
+#[cfg(feature = "no_std")]
+use alloc::string::{String, ToString};
+#[cfg(feature = "no_std")]
+use alloc::vec::Vec;
+
 use objkit::as_super;
 
 #[as_super]
@@ -31,7 +44,8 @@ fn test_as_super_reference_and_box() {
         msg: "Edge".to_string(),
     };
 
-    // using as_super on a reference and verifying that the returned reference is the same
+    // using as_super on a reference and verifying that the returned reference is
+    // the same
     let trait_ref: &dyn TestSuper = instance.as_testsuper();
     assert_eq!(trait_ref.say(), "Edge");
 

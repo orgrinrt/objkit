@@ -40,4 +40,15 @@ fn main() {
 
     let animal_super: &dyn Animal = dog.as_animal();
     println!("Super Animal speaks: {}", animal_super.speak());
+
+    // A second implementor, so the example shows what upcasting is for: holding two
+    // different concrete types behind one supertrait reference. With one,
+    // `as_animal` reads as a rename rather than as a widening.
+    let cat = Cat {
+        name: "Momo".to_string(),
+    };
+    let animals: [&dyn Animal; 2] = [dog.as_animal(), cat.as_animal()];
+    for animal in animals {
+        println!("Held as a supertrait: {}", animal.speak());
+    }
 }

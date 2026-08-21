@@ -8,8 +8,20 @@
 #[cfg(feature = "no_std")]
 extern crate alloc;
 
-// NOTE: this is especially to test the no_std feature is also consistent
+// The `no_std` prelude has neither, so declaring `alloc` is only half of it:
+// the names have to be brought in too. Without this the crate builds under
+// `no_std` and its tests do not, which is the shape that hides: `cargo build`
+// is green and only `cargo test` says otherwise.
+#[cfg(feature = "no_std")]
+use alloc::boxed::Box;
+#[cfg(feature = "no_std")]
+use alloc::format;
+#[cfg(feature = "no_std")]
+use alloc::string::{String, ToString};
+#[cfg(feature = "no_std")]
+use alloc::vec::Vec;
 
+// NOTE: this is especially to test the no_std feature is also consistent
 use objkit::obj_eq;
 
 // Simple scalar value trait
@@ -41,8 +53,9 @@ struct Circle {
 
 impl Shape for Circle {
     fn area(&self) -> f32 {
-        ::std::f32::consts::PI * self.radius * self.radius
+        ::core::f32::consts::PI * self.radius * self.radius
     }
+
     fn name(&self) -> &str {
         "Circle"
     }
@@ -57,6 +70,7 @@ impl Shape for Square {
     fn area(&self) -> f32 {
         self.side * self.side
     }
+
     fn name(&self) -> &str {
         "Square"
     }
@@ -143,13 +157,17 @@ mod tests {
         // Stated as the relation rather than as a decimal, so it does not have to be
         // recomputed by hand when the constant behind `area` changes. It did: this read
         // 78.53975, which is 3.14159 times the radius squared rather than pi times it.
-        let expected = ::std::f32::consts::PI * 5.0 * 5.0;
+        let expected = ::core::f32::consts::PI * 5.0 * 5.0;
         assert!((c1_ref.area() - expected).abs() < 0.00001);
         assert_eq!(c1_ref.name(), "Circle");
         assert_eq!(s_ref.name(), "Square");
     }
 
-    #[cfg(feature = "alloc")]
+    // `not(no_alloc)` rather than `feature = "alloc"`, which this crate has never
+    // had, so this test had never run under any selection. It needs an
+    // allocator, which is what `no_alloc` is the absence of, and `obj_eq` drops
+    // its two `Box<dyn Trait>` impls there.
+    #[cfg(not(feature = "no_alloc"))]
     #[test]
     fn test_boxed_objects() {
         let v1 = Box::new(IntValue(42)) as Box<dyn Value>;

@@ -8,6 +8,19 @@
 #[cfg(feature = "no_std")]
 extern crate alloc;
 
+// The `no_std` prelude has neither, so declaring `alloc` is only half of it:
+// the names have to be brought in too. Without this the crate builds under
+// `no_std` and its tests do not, which is the shape that hides: `cargo build`
+// is green and only `cargo test` says otherwise.
+#[cfg(feature = "no_std")]
+use alloc::boxed::Box;
+#[cfg(feature = "no_std")]
+use alloc::format;
+#[cfg(feature = "no_std")]
+use alloc::string::{String, ToString};
+#[cfg(feature = "no_std")]
+use alloc::vec::Vec;
+
 use objkit::as_any;
 
 #[as_any]

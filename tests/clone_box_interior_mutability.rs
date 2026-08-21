@@ -8,9 +8,28 @@
 #[cfg(feature = "no_std")]
 extern crate alloc;
 
-use objkit::clone_box;
+// The `no_std` prelude has neither, so declaring `alloc` is only half of it:
+// the names have to be brought in too. Without this the crate builds under
+// `no_std` and its tests do not, which is the shape that hides: `cargo build`
+// is green and only `cargo test` says otherwise.
+#[cfg(feature = "no_std")]
+use alloc::boxed::Box;
+#[cfg(feature = "no_std")]
+use alloc::format;
+#[cfg(feature = "no_std")]
+use alloc::string::{String, ToString};
+#[cfg(feature = "no_std")]
+use alloc::vec::Vec;
+#[cfg(feature = "no_std")]
+use core::any::Any;
+#[cfg(feature = "no_std")]
+use core::cell::Cell;
+#[cfg(not(feature = "no_std"))]
 use std::any::Any;
+#[cfg(not(feature = "no_std"))]
 use std::cell::Cell;
+
+use objkit::clone_box;
 
 #[clone_box]
 pub trait AdvancedTrait: Any {
@@ -20,7 +39,7 @@ pub trait AdvancedTrait: Any {
 
 #[derive(Clone)]
 struct ValidAdvancedImpl {
-    val: i32,
+    val:     i32,
     counter: Cell<u32>,
 }
 
@@ -28,6 +47,7 @@ impl AdvancedTrait for ValidAdvancedImpl {
     fn value(&self) -> i32 {
         self.val
     }
+
     fn as_any(&self) -> &dyn Any {
         self
     }
@@ -36,7 +56,7 @@ impl AdvancedTrait for ValidAdvancedImpl {
 #[test]
 fn test_valid_clone_box() {
     let original = Box::new(ValidAdvancedImpl {
-        val: 100,
+        val:     100,
         counter: Cell::new(0),
     }) as Box<dyn AdvancedTrait>;
     let cloned = original.clone();

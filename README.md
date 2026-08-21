@@ -149,17 +149,17 @@ These limitations can make working with trait objects cumbersome in scenarios wh
    Creates auxiliary trait implementations that work with rust's type system to keep static dispatch for concrete types, only using dynamic dispatch at trait object boundaries where it's unavoidable.
 
 2. **Static type guarantees**:
-   Maintains, where possible, rust's type system through trait bounds, for example for the clone_box pattern, by enforcing implementors be
+   Maintains, where possible, rust's type system through trait bounds, for example for the `clone_box` pattern, by enforcing implementors be
    `Clone + 'static` without runtime checks.
 3. **Minimal overhead abstractions**:
    ~~Introduces no overhead beyond the inherent dynamic dispatch required when working with trait objects. Avoids additional indirection
    layers or heap allocations that would degrade performance compared to a manually written implementation.~~ **NOTE: right now this is a
    work in progress and does not necessarily hold true**
 4. **Reduces manual boilerplate**:
-   Replaces error-prone manual auxiliary traits, blanket implementations, and explicit method forwarding typically needed for the clone_box pattern.
+   Replaces error-prone manual auxiliary traits, blanket implementations, and explicit method forwarding typically needed for the `clone_box` pattern.
 
 5. **Optimized dispatch implementation**:
-   Implements patterns like clone_box using direct trait method calls rather than type erasure techniques such as
+   Implements patterns like `clone_box` using direct trait method calls rather than type erasure techniques such as
    `Any` downcasting. This approach produces more analyzable IR for compiler backends, avoiding additional optimization barriers beyond the inherent limitations of trait objects.
 
 6. **Centralized implementation**:
@@ -180,7 +180,7 @@ These limitations can make working with trait objects cumbersome in scenarios wh
    The auto-generated implementations may make it less obvious what's happening under the hood compared to manual implementations. But that's also a pro. It's a two-edged sword.
 
 4. **Still Developing Features**:
-   Currently only implements the clone_box pattern, with other patterns still in planning.
+   Currently only implements the `clone_box` pattern, with other patterns still in planning.
 
 5. **Trait Object Limitations**:
    Still bound by rust's fundamental trait object constraints. Not a magic bullet, just a convenience for some common patterns.
