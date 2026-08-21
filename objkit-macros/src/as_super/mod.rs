@@ -10,8 +10,7 @@ use proc_macro::TokenStream;
 use syn::{parse_macro_input, ItemTrait};
 
 pub fn as_super(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    let input_trait = parse_macro_input!(item as ItemTrait);
-    let original_trait = input_trait.clone();
+    let original_trait = parse_macro_input!(item as ItemTrait);
 
     let output = aux_trait::generate(original_trait);
 
