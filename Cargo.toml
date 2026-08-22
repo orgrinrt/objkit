@@ -8,7 +8,6 @@ edition = "2021"
 # fresh resolve actually works. The lower number held only for a build resolving against
 # an existing lock file, which is not what a new consumer does.
 rust-version = "1.71"
-authors = ["orgrinrt", "Hiisi Digital"]
 
 [workspace.dependencies]
 proc-macro2 = { version = "^1.0" }
@@ -22,13 +21,13 @@ name = "objkit"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-authors.workspace = true
 description = """
 A toolkit providing convenient abstractions for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
 """
-license-file = "LICENSE"
+license = "MPL-2.0"
 readme = "README.md"
 keywords = ["trait-objects", "dyn-traits", "object-safety", "vtable", "type-erasure"]
+exclude = [".idea/", "target/"]
 categories = ["rust-patterns", "development-tools", "data-structures"]
 documentation = "https://docs.rs/objkit"
 homepage = "https://github.com/orgrinrt/objkit"
