@@ -33,10 +33,10 @@ than one of these crates and is not visible from any of them alone.
 
 | Feature     | Status      | Description                                 |
 |-------------|-------------|---------------------------------------------|
-| `clone_box` | yes Stable    | `clone_box` pattern                         |
-| `obj_eq`    | unstable | equality comparisons for trait objects      |
-| `as_super`  | unstable | a shorthand for `as_foo(&self) -> &dyn Foo` |
-| `as_any`    | unstable | downcasting to `Any` for trait objects      |
+| `clone_box` | stable      | `clone_box` pattern                         |
+| `obj_eq`    | unstable    | equality comparisons for trait objects      |
+| `as_super`  | unstable    | a shorthand for `as_foo(&self) -> &dyn Foo` |
+| `as_any`    | unstable    | downcasting to `Any` for trait objects      |
 
 ## Usage
 
