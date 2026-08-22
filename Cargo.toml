@@ -26,7 +26,7 @@ authors.workspace = true
 description = """
 A toolkit providing convenient abstractions for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
 """
-license-file = "LICENSE"
+license = "MPL-2.0"
 readme = "README.md"
 keywords = ["trait-objects", "dyn-traits", "object-safety", "vtable", "type-erasure"]
 categories = ["rust-patterns", "development-tools", "data-structures"]

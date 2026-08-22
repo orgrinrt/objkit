@@ -1,13 +1,14 @@
-# objkit
+# `objkit`
 
 <div align="center" style="text-align: center;">
 
 [![GitHub Stars](https://img.shields.io/github/stars/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/stargazers)
+[![Crates.io](https://img.shields.io/crates/v/objkit)](https://crates.io/crates/objkit)
+[![docs.rs](https://img.shields.io/docsrs/objkit)](https://docs.rs/objkit)
 [![GitHub Issues](https://img.shields.io/github/issues/orgrinrt/objkit.svg)](https://github.com/orgrinrt/objkit/issues)
-[![Latest Version](https://img.shields.io/badge/version-0.0.2-red.svg?label=latest)](https://github.com/orgrinrt/objkit)
-![GitHub last commit](https://img.shields.io/github/last-commit/orgrinrt/objkit?color=%23009689&link=https%3A%2F%2Fgithub.com%2Forgrinrt%2Fobjkit)
+![License](https://img.shields.io/github/license/orgrinrt/objkit?color=%23009689)
 
-> A toolkit providing convenient abstractions for trait object operations that aren't supported by rust's trait system directly, such as cloning, comparison, and conversion
+> Trait-object operations rust does not give you directly: cloning, comparison, conversion.
 
 </div>
 
@@ -32,10 +33,10 @@ than one of these crates and is not visible from any of them alone.
 
 | Feature     | Status      | Description                                 |
 |-------------|-------------|---------------------------------------------|
-| `clone_box` | ✅ Stable    | `clone_box` pattern                         |
-| `obj_eq`    | 🚧 Unstable | equality comparisons for trait objects      |
-| `as_super`  | 🚧 Unstable | a shorthand for `as_foo(&self) -> &dyn Foo` |
-| `as_any`    | 🚧 Unstable | downcasting to `Any` for trait objects      |
+| `clone_box` | yes Stable    | `clone_box` pattern                         |
+| `obj_eq`    | unstable | equality comparisons for trait objects      |
+| `as_super`  | unstable | a shorthand for `as_foo(&self) -> &dyn Foo` |
+| `as_any`    | unstable | downcasting to `Any` for trait objects      |
 
 ## Usage
 
@@ -249,11 +250,6 @@ Minor versions may have breaking changes, which can include bumping msrv.
 
 Patch versions are backwards compatible, so using version specifiers such as `~x.y` or `^x.y.0` is safe.
 
-## Support
-
-Whether you use this project, have learned something from it, or just like it, please consider supporting it by buying me a coffee, so I can dedicate more time on open-source projects like this :)
-
-<a href="https://buymeacoffee.com/orgrinrt" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
 
 ## Allocation
 
@@ -282,10 +278,16 @@ did not resolve and the crate it came from defeated the purpose twice over. `cor
 has been in core since 1.0 and is what it uses now, which drops that dependency entirely.
 Nothing had caught it because no test compiled a `#![no_std]` consumer that used `obj_eq`.
 
+## Support
+
+Whether you use this project, have learned something from it, or just like it, please consider supporting it by buying me a coffee, so I can dedicate more time on open-source projects like this :)
+
+<a href="https://buymeacoffee.com/orgrinrt" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+
 ## License
 
 > The project is licensed under the **Mozilla Public License 2.0**.
 
 `SPDX-License-Identifier: MPL-2.0`
 
-> You can check out the full license [here](https://github.com/orgrinrt/objkit/blob/main/LICENSE)
+> You can check out the full license [here](https://github.com/orgrinrt/objkit/blob/dev/LICENSE)
