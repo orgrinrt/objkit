@@ -38,6 +38,22 @@ than one of these crates and is not visible from any of them alone.
 | `as_super`  | unstable    | a shorthand for `as_foo(&self) -> &dyn Foo` |
 | `as_any`    | unstable    | downcasting to `Any` for trait objects      |
 
+## Installation
+
+Not published yet, so this does not resolve. It is the command once a release
+lands.
+
+```bash
+cargo add objkit
+```
+
+Or in `Cargo.toml`:
+
+```toml
+[dependencies]
+objkit = "0.0.2"
+```
+
 ## Usage
 
 This crate provides procedural macros that enhance rust traits by enabling operations that aren't natively supported for trait objects. Currently, the sole stable feature is the
@@ -156,7 +172,7 @@ In rust, trait objects (`dyn Trait`) have fundamental limitations due to type er
 These limitations can make working with trait objects cumbersome in scenarios where operations like cloning (handled with the
 `clone_box` pattern macro), comparison (the `obj_eq` macro), or conversion (the `as_super` and `as_any` macros) are needed.
 
-## Pros & Cons
+## Pros and cons
 
 <details>
 <summary>Click to expand initial listing (not necessarily accurate at this point anymore)</summary>
