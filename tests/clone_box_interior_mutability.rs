@@ -14,20 +14,8 @@ extern crate alloc;
 // is green and only `cargo test` says otherwise.
 #[cfg(feature = "no_std")]
 use alloc::boxed::Box;
-#[cfg(feature = "no_std")]
-use alloc::format;
-#[cfg(feature = "no_std")]
-use alloc::string::{String, ToString};
-#[cfg(feature = "no_std")]
-use alloc::vec::Vec;
-#[cfg(feature = "no_std")]
 use core::any::Any;
-#[cfg(feature = "no_std")]
 use core::cell::Cell;
-#[cfg(not(feature = "no_std"))]
-use std::any::Any;
-#[cfg(not(feature = "no_std"))]
-use std::cell::Cell;
 
 use objkit::clone_box;
 

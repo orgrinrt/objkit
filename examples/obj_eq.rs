@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-use objkit_macros::obj_eq;
+use objkit::obj_eq;
 
 #[obj_eq]
 pub trait Animal {

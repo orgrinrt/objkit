@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-use objkit_macros::as_super;
+use objkit::as_super;
 
 #[as_super]
 pub trait Animal {

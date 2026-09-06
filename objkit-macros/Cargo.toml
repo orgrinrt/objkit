@@ -21,7 +21,6 @@ quote.workspace = true
 syn.workspace = true
 proc-macro2.workspace = true
 include_proc_macro.workspace = true
-siphasher = { version = "1.0.1", optional = true }
 
 [features]
 # Building this crate on its own used to reach neither `std_box` nor `alloc_box` and stop at

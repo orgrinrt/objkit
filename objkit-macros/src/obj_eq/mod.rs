@@ -4,48 +4,11 @@
 // SPDX-License-Identifier: MPL-2.0
 //------------------------------------------------------------------------------
 
-// TODO: equality with something like this:
-
-// ```
-//  trait EqObject {
-//     // Type-safe equality test for trait objects
-//     fn eq_object(&self, other: &dyn EqObject) -> bool;
-//
-//     // Optional: Add fast path with type ID comparison first
-//     fn type_hash(&self) -> u64;
-// }
-//
-// impl<T: 'static + PartialEq> EqObject for T {
-//     fn eq_object(&self, other: &dyn EqObject) -> bool {
-//         // Fast path: Different type hashes mean definitely not equal
-//         if self.type_hash() != other.type_hash() {
-//             return false;
-//         }
-//
-//         // Only downcast when types match
-//         if let Some(typed) = other.downcast_ref::<T>() {
-//             self == typed
-//         } else {
-//             false
-//         }
-//         // TODO: maybe think about variation where we compare pointers or some other
-//         //       way to avoid downcasting, at least try a couple of different fast paths
-//         //       before downcasting
-//         //       e.g. if we know that the type is a pointer, we can compare the pointers
-//         //       directly, or if we know that the type is a reference, we can compare the
-//         //       references directly etc.
-//         //       Also maybe consider using a custom type hash function instead of std::any::TypeId(?)
-//         //       to avoid the overhead of creating a TypeId object
-//         //       Also maybe we can make this branchless by using a union or something
-//     }
-//
-//     fn type_hash(&self) -> u64 {
-//         // Use std::any::TypeId hash or custom type hash
-//         std::any::TypeId::of::<T>().into_u64()
-//     }
-// }
-// ```
-// NOTE: maybe we can use a union to store the pointer and the vtable in the same memory location
+// Equality over trait objects is a `PartialEq` on `&dyn Trait` and on `Box<dyn Trait>`,
+// resolved through an auxiliary trait every implementor gets for free. The comparison
+// recovers the concrete type on the other side with `Any::downcast_ref`, which is the
+// `TypeId` check and the cast as one operation, and compares with the implementor's own
+// `PartialEq` when it is the same type. Different types are never equal.
 
 mod aux_trait;
 

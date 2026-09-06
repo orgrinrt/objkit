@@ -35,16 +35,11 @@ repository = "https://github.com/orgrinrt/objkit"
 
 [dependencies]
 objkit-macros.workspace = true
-# Only under `no_std`, and re-exported rather than used here: the `obj_eq` expansion
-# needs a hasher that does not come from `std`, and reaches it through this crate so a
-# consumer does not have to depend on it itself. The type id comes from `core::any`,
-# which needs no crate.
-siphasher = { version = "1.0.1", optional = true }
 
 [features]
 default = ["std"]
 std = ["objkit-macros/std"]
-no_std = ["objkit-macros/no_std", "dep:siphasher"]
+no_std = ["objkit-macros/no_std"]
 # Implies `no_std`. `clone_box` is gone under it, because a boxed clone is exactly what an
 # allocator is for; `obj_eq` keeps comparing `&dyn Trait` and loses only the two impls over
 # `Box<dyn Trait>`; `as_any` and `as_super` are unaffected.
@@ -57,3 +52,8 @@ no_alloc = ["no_std", "objkit-macros/no_alloc"]
 # reaches for either.
 highroller = { git = "https://github.com/orgrinrt/highroller.git", branch = "dev" }
 str_extensions = { git = "https://github.com/orgrinrt/str_extensions.git", branch = "dev" }
+criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
+
+[[bench]]
+name = "obj_eq"
+harness = false

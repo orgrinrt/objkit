@@ -13,13 +13,7 @@ extern crate alloc;
 // `no_std` and its tests do not, which is the shape that hides: `cargo build`
 // is green and only `cargo test` says otherwise.
 #[cfg(feature = "no_std")]
-use alloc::boxed::Box;
-#[cfg(feature = "no_std")]
-use alloc::format;
-#[cfg(feature = "no_std")]
 use alloc::string::{String, ToString};
-#[cfg(feature = "no_std")]
-use alloc::vec::Vec;
 
 use objkit::as_super;
 
