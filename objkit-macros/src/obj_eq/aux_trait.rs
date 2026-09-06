@@ -32,13 +32,22 @@ pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
         parse_quote!(#internal_generic: #trait_name #ty_generics + 'static + PartialEq),
     );
 
+    // The auxiliary trait, a supertrait of the annotated one, so both methods sit in
+    // `dyn Trait`'s own vtable and neither side of a comparison has to be upcast first.
+    // Upcasting `&dyn Trait` to `&dyn TraitObjEq` is what the language does since 1.86 and
+    // the crate's minimum is below that, so an earlier shape carried a method for it and
+    // paid a call per side; taking `&dyn Any` instead needs no upcast at all.
+    //
+    // `eq_any` hands out the value as `&dyn Any`, which is what lets `dyn_eq` recover the
+    // concrete type on the other side with `downcast_ref`. It is not named `as_any`,
+    // because `#[as_any]` is applied to the same trait below and puts a method of that
+    // name on a sibling supertrait, and two supertraits offering one name makes the call
+    // on `dyn Trait` ambiguous.
     let trait_impl = quote! {
         #vis trait #aux_trait_name #decl_generics #where_clause {
-            fn dyn_eq(&self, other: &dyn #aux_trait_name #ty_generics) -> bool;
+            fn dyn_eq(&self, other: &dyn ::core::any::Any) -> bool;
             #[doc(hidden)]
-            fn type_hash(&self) -> u64;
-            #[doc(hidden)]
-            fn as_eq_object(&self) -> &dyn #aux_trait_name #ty_generics;
+            fn eq_any(&self) -> &dyn ::core::any::Any;
         }
     };
 
@@ -46,62 +55,31 @@ pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
         .supertraits
         .push(parse_quote!(#aux_trait_name #ty_generics));
 
-    #[cfg(feature = "std")]
-    let type_hash_impl = quote! {
-        #[doc(hidden)]
-        #[inline]
-        fn type_hash(&self) -> u64 {
-            use ::std::hash::{Hash, Hasher};
-            let mut hasher = ::std::collections::hash_map::DefaultHasher::new();
-            ::std::any::TypeId::of::<#internal_generic>().hash(&mut hasher);
-            hasher.finish()
-        }
-    };
-    #[cfg(not(feature = "std"))]
-    let type_hash_impl = quote! {
-        #[doc(hidden)]
-        #[inline]
-        fn type_hash(&self) -> u64 {
-            use ::core::hash::{Hash, Hasher};
-
-            // `core::any::TypeId`, which has been in core since 1.0 and needs no crate at
-            // all. This used to name `::typeable::TypeId`, which never resolved: that item
-            // is a private re-import of `std::any::TypeId` inside a crate that is itself
-            // `std`, so the whole point of reaching for it was defeated twice over. Nothing
-            // caught it because no test ever compiled a `no_std` consumer that used
-            // `obj_eq`, which is the only place the expansion lands.
-            //
-            // The hasher does need a crate, and it comes through objkit's own re-export
-            // rather than being named here, for the same reason: `::siphasher` resolves in
-            // the consumer only if the consumer happens to depend on it under that name.
-            let mut hasher = ::objkit::__objkit_siphasher::sip::SipHasher24::new_with_keys(0, 0);
-            ::core::any::TypeId::of::<#internal_generic>().hash(&mut hasher);
-            hasher.finish()
-        }
-    };
-
+    // Equality is one `downcast_ref`, which compares the two `TypeId`s and hands back the
+    // concrete reference when they match. The check and the cast are one operation, so
+    // there is no window in which the check can have passed for a type the cast then
+    // gets wrong.
+    //
+    // It used to be two: a 64-bit hash of each side's `TypeId` compared first, then an
+    // unchecked pointer cast on the strength of the hashes being equal. That paid two
+    // hasher constructions and two hashes of a 128-bit id per comparison, and it made
+    // a hash collision between two implementors undefined behaviour with nothing in
+    // safe code to stop it. Comparing the ids themselves is both cheaper and total.
     let obj_eq_impl = quote! {
         impl #merged_impl_generics #aux_trait_name #ty_generics for #internal_generic
         #aux_where
         {
             #[inline]
-            fn dyn_eq(&self, other: &dyn #aux_trait_name #ty_generics) -> bool {
-                if self.type_hash() != other.type_hash() {
-                    return false;
+            fn dyn_eq(&self, other: &dyn ::core::any::Any) -> bool {
+                match other.downcast_ref::<#internal_generic>() {
+                    ::core::option::Option::Some(other) => self == other,
+                    ::core::option::Option::None => false,
                 }
-                // SAFETY: the type_hash check above establishes that `other` is a
-                // `#internal_generic`, which is what makes this cast the identity.
-                let other_t = unsafe {
-                    &*(other.as_eq_object() as *const _ as *const #internal_generic)
-                };
-                self == other_t
             }
-
-            #type_hash_impl
 
             #[doc(hidden)]
             #[inline]
-            fn as_eq_object(&self) -> &dyn #aux_trait_name #ty_generics {
+            fn eq_any(&self) -> &dyn ::core::any::Any {
                 self
             }
         }
@@ -118,7 +96,7 @@ pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
         impl #decl_generics PartialEq for #box_path <dyn #trait_name #ty_generics> #where_clause {
             #[inline]
             fn eq(&self, other: &Self) -> bool {
-                #aux_trait_name::dyn_eq(self.as_eq_object(), other.as_eq_object())
+                #aux_trait_name::dyn_eq(&**self, other.eq_any())
             }
         }
         }
@@ -130,10 +108,7 @@ pub(crate) fn generate(mut original_trait: ItemTrait) -> TokenStream {
         impl #decl_generics PartialEq for &dyn #trait_name #ty_generics #where_clause {
             #[inline]
             fn eq(&self, other: &Self) -> bool {
-                #aux_trait_name::dyn_eq(
-                    self.as_eq_object() as &dyn #aux_trait_name #ty_generics,
-                    other.as_eq_object() as &dyn #aux_trait_name #ty_generics,
-                )
+                #aux_trait_name::dyn_eq(*self, other.eq_any())
             }
         }
     };

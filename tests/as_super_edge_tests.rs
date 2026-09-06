@@ -15,11 +15,7 @@ extern crate alloc;
 #[cfg(feature = "no_std")]
 use alloc::boxed::Box;
 #[cfg(feature = "no_std")]
-use alloc::format;
-#[cfg(feature = "no_std")]
 use alloc::string::{String, ToString};
-#[cfg(feature = "no_std")]
-use alloc::vec::Vec;
 
 use objkit::as_super;
 

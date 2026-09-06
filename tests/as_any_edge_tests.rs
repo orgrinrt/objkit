@@ -18,8 +18,6 @@ use alloc::boxed::Box;
 use alloc::format;
 #[cfg(feature = "no_std")]
 use alloc::string::{String, ToString};
-#[cfg(feature = "no_std")]
-use alloc::vec::Vec;
 
 use objkit::as_any;
 

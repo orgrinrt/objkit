@@ -234,31 +234,23 @@ These limitations can make working with trait objects cumbersome in scenarios wh
 
 ## Compatibility
 
-This crate requires rust `1.64.0` or later.
-
-For practical reasons, we pin the msrv there to use cargo's stabilized
-`workspace-inheritance` feature, but also to remain fairly compatible.
+This crate requires rust `1.71` or later. The crate's own source builds on `1.64`, and a
+fresh resolve does not, because `quote` moved past it, so the declared minimum is the one a
+new consumer can actually build with. `tests/feature_matrix.rs` checks it.
 
 ### Feature flags
 
-The crate has two cargo features: `std` (enabled by default) uses `std::boxed::Box`, while
-`no_std` is intended to switch to `alloc::boxed::Box` for embedded or similarly constrained
-targets. Exactly one of the two is meant to be on, and because `std` is a default feature,
-selecting `no_std` also means turning the defaults off.
+The crate has two cargo features for the standard library: `std`, on by default, and
+`no_std`, which builds the crate against `alloc` and puts `#![no_std]` on it. Exactly one of
+the two is meant to be on, and because `std` is a default feature, selecting `no_std` also
+means turning the defaults off. Both, or neither, is refused at compile time with a message
+that says which of the two to pick.
 
-**`no_std` does not build today.** `cargo build --no-default-features --features no_std` fails
-while compiling `objkit-macros`, which applies `#![cfg_attr(feature = "no_std", no_std)]` to
-itself and then still calls `format!` and `to_string`. A procedural macro crate runs on the host
-at compile time, so it has no reason to be `no_std` in the first place; the flag it needs to
-propagate is the one choosing the `Box` path in the code it *generates*. Until that is separated,
-`std` (the default) is the only configuration that compiles, and `--no-default-features` alone and
-`--all-features` both fail as well.
-
-The `as_any` attribute is the one piece that is ready for the `no_std` case: it names
-`core::any::Any`, which is the same type `std` re-exports, and its expansion allocates nothing.
-The `obj_eq` attribute is not: its `no_std` arm expands to `siphasher` and `typeable` paths, and
-those are dependencies of the macro crate rather than of `objkit`, so they would not be in scope
-at the call site.
+The expansions name nothing that depends on the feature. `Box` is reached through a
+re-export of this crate's own, so one expansion serves a `std` consumer and a `#![no_std]`
+one alike, and `obj_eq` finds the concrete type on the other side of a comparison with
+`core::any::Any`, which needs no crate at all. `no_alloc`, below, is the third position and
+the only one that takes anything away.
 
 ### Versioning policy
 
@@ -288,11 +280,14 @@ somewhere else.
   nothing to offer without one, and it is gone at the import rather than failing inside an
   expansion.
 
-The `no_std` path for `obj_eq` had never worked. It reached for `typeable::TypeId`, which is
-a private re-import of `std::any::TypeId` inside a crate that is itself `std`, so the path
-did not resolve and the crate it came from defeated the purpose twice over. `core::any::TypeId`
-has been in core since 1.0 and is what it uses now, which drops that dependency entirely.
-Nothing had caught it because no test compiled a `#![no_std]` consumer that used `obj_eq`.
+`obj_eq` compares the same way under all three. The generated `PartialEq` asks the other side
+for itself as `&dyn Any` and calls `downcast_ref` on it, which is the `TypeId` comparison and
+the cast as one operation, so two implementors of different types are never equal and two of
+the same type compare with that type's own `PartialEq`. There is no hashing in it and no
+`unsafe`: an earlier shape hashed each side's `TypeId` to 64 bits, compared the hashes, and
+cast on the strength of that, which paid two hashes per comparison and turned a collision
+into undefined behaviour. `benches/obj_eq.rs` puts the generated comparison beside a
+hand-written downcast and beside that earlier shape.
 
 ## Support
 
